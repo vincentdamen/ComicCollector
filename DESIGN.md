@@ -15,8 +15,8 @@ In FireBase zal als volgt werken:
                 - condition
 
 ### Images
-![Schedule](schema.png)
-![Diagrams](diagrams.png)
+![Schedule](doc/schema.png)
+![Diagrams](doc/diagrams.png)
 
 
 
