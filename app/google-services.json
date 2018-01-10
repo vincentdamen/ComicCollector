@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "389063009563",
+    "firebase_url": "https://comiccollector-d49f4.firebaseio.com",
+    "project_id": "comiccollector-d49f4",
+    "storage_bucket": "comiccollector-d49f4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:389063009563:android:866c063c2c4c0f74",
+        "android_client_info": {
+          "package_name": "com.example.vincent.comiccollector"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "389063009563-ff5bns82h6av5hsbe0ek8ueorl0mkfp9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.vincent.comiccollector",
+            "certificate_hash": "24a92f545729e43385482843900567823ef66403"
+          }
+        },
+        {
+          "client_id": "389063009563-d9ojehm32gs5iv1k9f21pvk40brneh0h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAu7RBNO0W2RGnWTbnt-nbi-Otux6dDErM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "389063009563-d9ojehm32gs5iv1k9f21pvk40brneh0h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
