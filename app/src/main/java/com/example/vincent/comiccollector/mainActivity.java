@@ -40,54 +40,49 @@ public class mainActivity extends AppCompatActivity {
                 case R.id.navigation_settings:
                     mTextMessage.setText(R.string.settings);
                     return true;
-
             }
             return false;
         }
     };
-    public String createLink(String query){
+
+    public String createLink(String query) {
         // Creates the link to access the Marvel API
-        String link = getString(R.string.apiLink)+query;
-        String timeStamp = System.currentTimeMillis()/1000 + "" ;
+        String link = getString(R.string.apiLink) + query;
+        String timeStamp = System.currentTimeMillis() / 1000 + "";
         String privateKey = getString(R.string.privateKey);
         String publicKey = getString(R.string.publicKey);
-        String hash = createHash(publicKey,privateKey,timeStamp);
+        String combination = timeStamp + privateKey + publicKey;
+        String hash = createHash(combination);
+        return combineLink(link, timeStamp, hash);
+    }
 
-        return combineLink(link,publicKey,timeStamp,hash);
-    }
-    public String combineLink(String link,String publicKey, String timeStamp, String hash){
+    public String combineLink(String link, String timeStamp, String hash) {
         // Creates the full link
-        return link + "&ts="+timeStamp+"&apikey="+publicKey+"&hash="+hash;
+        return link + "&ts=" + timeStamp + "&apikey=" + getString(R.string.publicKey) +
+                "&hash=" + hash;
     }
-    public String createHash(String publicKey,String privateKey, String timeStamp){
+
+    public String createHash(String combination) {
         // Creates the hash code to validate the keys
-        String combination = timeStamp+ privateKey+ publicKey;
         try {
             MessageDigest messageDigest = MessageDigest.getInstance("MD5");
-            messageDigest.update(combination.getBytes(),0,combination.length());
+            messageDigest.update(combination.getBytes(), 0, combination.length());
             return new BigInteger(1, messageDigest.digest()).toString(16);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
         return "Something went wrong";
     }
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        mTextMessage = (TextView) findViewById(R.id.message);
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        String url = createLink("");
+    public void contactApi(String query) {
+        String url = createLink(query);
         RequestQueue queue = Volley.newRequestQueue(this);
-
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         // Display the first 500 characters of the response string.
-                        mTextMessage.setText("Response is: "+ response.substring(0,500));
+                        mTextMessage.setText("Response is: " + response.substring(0, 500));
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -99,4 +94,14 @@ public class mainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        mTextMessage = (TextView) findViewById(R.id.message);
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        contactApi("");
+
+    }
 }
