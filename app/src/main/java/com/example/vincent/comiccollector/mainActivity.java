@@ -24,7 +24,6 @@ public class mainActivity extends AppCompatActivity {
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
@@ -42,8 +41,7 @@ public class mainActivity extends AppCompatActivity {
                     return true;
             }
             return false;
-        }
-    };
+        }};
 
     public String createLink(String query) {
         // Creates the link to access the Marvel API
@@ -75,9 +73,8 @@ public class mainActivity extends AppCompatActivity {
     }
 
     public void contactApi(String query) {
-        String url = createLink(query);
         RequestQueue queue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, createLink(query),
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -91,7 +88,6 @@ public class mainActivity extends AppCompatActivity {
             }
         });
         queue.add(stringRequest);
-
     }
 
     @Override
