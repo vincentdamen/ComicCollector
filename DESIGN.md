@@ -9,7 +9,6 @@ In FireBase zal als volgt werken:
 - users
     - userId
         - userName
-        - password
         - collection
             - comicId
                 - condition
