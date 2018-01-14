@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -23,6 +22,7 @@ import org.json.JSONTokener;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 
 public class mainActivity extends AppCompatActivity {
 
@@ -95,17 +95,29 @@ public class mainActivity extends AppCompatActivity {
         });
         queue.add(stringRequest);
     }
-    public JSONArray JSONify(String response){
+    public ArrayList<comic> JSONify(String response){
+        ArrayList<comic> result = new ArrayList<comic>();
         JSONArray subArray = new JSONArray();
         try{
         JSONObject object =(JSONObject) new JSONTokener(response).nextValue();
         subArray = object.getJSONObject("data").getJSONArray("results");
+        result = stripComics(subArray);
         }
         catch (JSONException e) {
             e.printStackTrace();
         }
-        return subArray;
+        return result;
         }
+
+    public ArrayList<comic> stripComics(JSONArray comics){
+        ArrayList<comic> result = new ArrayList<comic>();
+        /** MAAK HIER de class sizzle
+         * en gebruik uniforme functies
+         * Maak daarna de grid adapter
+          */
+
+        return result;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
