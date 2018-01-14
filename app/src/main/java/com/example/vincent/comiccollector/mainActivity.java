@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -13,6 +14,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -79,7 +85,7 @@ public class mainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         // Display the first 500 characters of the response string.
-                        mTextMessage.setText("Response is: " + response.substring(0, 500));
+                        mTextMessage.setText(JSONify(response).toString());
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -89,7 +95,17 @@ public class mainActivity extends AppCompatActivity {
         });
         queue.add(stringRequest);
     }
-
+    public JSONArray JSONify(String response){
+        JSONArray subArray = new JSONArray();
+        try{
+        JSONObject object =(JSONObject) new JSONTokener(response).nextValue();
+        subArray = object.getJSONObject("data").getJSONArray("results");
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return subArray;
+        }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
