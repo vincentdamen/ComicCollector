@@ -22,6 +22,7 @@ public class loginMenu extends Fragment implements View.OnClickListener {
         }
     }
 
+
     public void openDialog(boolean register) {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         if (register) {

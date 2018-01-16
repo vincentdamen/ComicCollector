@@ -1,8 +1,19 @@
 package com.example.vincent.comiccollector;
 
-/**
- * Created by Vincent on 15-1-2018.
- */
+
 
 public class ownedComic {
+    public int comicId;
+    public String condition;
+    public String thumbExt;
+    public String thumbLink;
+
+    public ownedComic(int comicId, String condition, String thumbExt, String thumbLink){
+        this.comicId = comicId;
+        this.condition = condition;
+        this.thumbExt = thumbExt;
+        this.thumbLink = thumbLink;
+    }
+    public ownedComic(){}
+
 }

@@ -7,6 +7,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -20,6 +21,11 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -120,13 +126,45 @@ public class mainActivity extends AppCompatActivity {
 
     public ArrayList<comic> stripComics(JSONArray comics){
         ArrayList<comic> result = new ArrayList<comic>();
-        /** MAAK HIER de class sizzle
+        /** MAAK HIER de class vanaf de api
          * en gebruik uniforme functies
          * Maak daarna de grid adapter
           */
 
         return result;
     }
+
+    public void getCollection(){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference nDatabase = database.getReference("Users");
+        final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser userId = mAuth.getCurrentUser();
+        nDatabase.child(userId.getUid()).child("collection").addListenerForSingleValueEvent(
+                new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<ownedComic> collection = saveCollection(dataSnapshot);
+                /* insert adapter here*/
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public ArrayList<ownedComic> saveCollection(DataSnapshot dataSnapshot) {
+        ArrayList<ownedComic> collectionList = new ArrayList<ownedComic>();
+        for (DataSnapshot noteDataSnapshot : dataSnapshot.getChildren()) {
+            ownedComic comicBook = noteDataSnapshot.getValue(ownedComic.class);
+            collectionList.add(comicBook);
+        }
+        return collectionList;
+    }
+
+
     public void checkLogin(){
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
@@ -137,11 +175,13 @@ public class mainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        checkIntent();
         setContentView(R.layout.activity_main);
         mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         contactApi("");
+        getCollection();
 
     }
     @Override
@@ -176,6 +216,12 @@ public class mainActivity extends AppCompatActivity {
         // Kill de app
         else {
             super.onBackPressed();
+        }
+    }
+
+    public void checkIntent(){
+        if (getIntent().getBooleanExtra("EXIT", false)) {
+            finish();
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.vincent.comiccollector;
 
+import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -17,4 +18,12 @@ public class authentication extends AppCompatActivity {
         ft.replace(R.id.frameTarget , fragment);
         ft.commit();
     }
+
+
+    @Override
+    public void onBackPressed() {
+        // Deze override voorkomt dat je terug kan geen naar de app haar home screen
+        Intent intent = new Intent(getApplicationContext(), mainActivity.class);
+        intent.putExtra("EXIT", true);
+        startActivity(intent);    }
 }
