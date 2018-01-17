@@ -1,5 +1,6 @@
 package com.example.vincent.comiccollector;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,16 +49,13 @@ public class mainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_collection:
-                    mTextMessage.setText(R.string.my_collection);
+                    openFragment();
                     return true;
                 case R.id.navigation_browse:
-                    mTextMessage.setText(R.string.browse);
                     return true;
                 case R.id.navigation_search:
-                    mTextMessage.setText(R.string.search);
                     return true;
                 case R.id.navigation_settings:
-                    mTextMessage.setText(R.string.settings);
                     FirebaseAuth.getInstance().signOut();
                     onStart();
                     return true;
@@ -134,35 +133,7 @@ public class mainActivity extends AppCompatActivity {
         return result;
     }
 
-    public void getCollection(){
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference nDatabase = database.getReference("Users");
-        final FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseUser userId = mAuth.getCurrentUser();
-        nDatabase.child(userId.getUid()).child("collection").addListenerForSingleValueEvent(
-                new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                ArrayList<ownedComic> collection = saveCollection(dataSnapshot);
-                /* insert adapter here*/
 
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    public ArrayList<ownedComic> saveCollection(DataSnapshot dataSnapshot) {
-        ArrayList<ownedComic> collectionList = new ArrayList<ownedComic>();
-        for (DataSnapshot noteDataSnapshot : dataSnapshot.getChildren()) {
-            ownedComic comicBook = noteDataSnapshot.getValue(ownedComic.class);
-            collectionList.add(comicBook);
-        }
-        return collectionList;
-    }
 
 
     public void checkLogin(){
@@ -172,16 +143,23 @@ public class mainActivity extends AppCompatActivity {
             Intent goToNextActivity = new Intent(getBaseContext(), authentication.class);
             startActivity(goToNextActivity);}
     }
+
+    public void openFragment(){
+        FragmentManager fm = getSupportFragmentManager();
+        collectionView fragment = new collectionView();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.targetFrame, fragment);
+        ft.commit();
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         checkIntent();
         setContentView(R.layout.activity_main);
-        mTextMessage = (TextView) findViewById(R.id.message);
+        openFragment();
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        contactApi("");
-        getCollection();
+        //contactApi("");
 
     }
     @Override
