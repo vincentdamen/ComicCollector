@@ -23,7 +23,6 @@ public class authentication extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         // Deze override voorkomt dat je terug kan geen naar de app haar home screen
-        Intent intent = new Intent(getApplicationContext(), mainActivity.class);
-        intent.putExtra("EXIT", true);
-        startActivity(intent);    }
+        finish();
+    }
 }

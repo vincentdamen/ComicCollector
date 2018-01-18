@@ -10,7 +10,8 @@
         android:layout_width="350dp"
         android:layout_height="337dp"
         android:layout_gravity="center"
-        android:background="@drawable/common_google_signin_btn_icon_light_normal_background">
+        android:background="@drawable/common_google_signin_btn_icon_light_normal_background"
+        android:fadingEdge="horizontal">
 
         <TextView
             android:id="@+id/textView6"

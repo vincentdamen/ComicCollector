@@ -63,6 +63,7 @@ public class collectionView extends Fragment {
         return collectionList;
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

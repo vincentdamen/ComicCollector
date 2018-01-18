@@ -136,13 +136,17 @@ public class mainActivity extends AppCompatActivity {
 
 
 
-    public void checkLogin(){
+    public boolean checkLogin(){
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
         if (user == null) {
             Intent goToNextActivity = new Intent(getBaseContext(), authentication.class);
-            startActivity(goToNextActivity);}
-    }
+            startActivity(goToNextActivity);
+            finish();
+            return false;
+        }
+    return true;}
+
 
     public void openFragment(){
         FragmentManager fm = getSupportFragmentManager();
@@ -154,13 +158,13 @@ public class mainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        checkIntent();
-        setContentView(R.layout.activity_main);
-        openFragment();
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        //contactApi("");
-
+        if (checkLogin()) {
+            setContentView(R.layout.activity_main);
+            openFragment();
+            BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+            navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+            //contactApi("");
+        }
     }
     @Override
     public void onStart() {
@@ -197,9 +201,4 @@ public class mainActivity extends AppCompatActivity {
         }
     }
 
-    public void checkIntent(){
-        if (getIntent().getBooleanExtra("EXIT", false)) {
-            finish();
-        }
-    }
 }
