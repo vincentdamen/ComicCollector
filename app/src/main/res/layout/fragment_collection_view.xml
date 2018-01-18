@@ -8,9 +8,11 @@
     <GridView
         android:id="@+id/collectionGrid"
         android:layout_width="fill_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center"
         android:importantForAutofill="auto|yes"
         android:numColumns="3"
-        android:verticalSpacing="4dp" tools:targetApi="o"/>
+        android:padding="16dp"
+        android:verticalSpacing="4dp"
+        tools:targetApi="o" />
 </FrameLayout>
