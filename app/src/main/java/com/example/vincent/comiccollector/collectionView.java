@@ -10,9 +10,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageView;
 
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -21,6 +29,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 /**
@@ -28,9 +44,100 @@ import java.util.ArrayList;
  */
 public class collectionView extends Fragment {
     GridView collectionGrid;
-    ArrayList<ownedComic> test = new ArrayList<ownedComic>();
+    mainActivity mainActivity;
+
     public collectionView() {
         // Required empty public constructor
+    }
+
+    public String createLink(String query) {
+        // Creates the link to access the Marvel API
+        String link = getString(R.string.apiLink)+ query+ getString(R.string.limit);
+        String timeStamp = System.currentTimeMillis() / 1000 + "";
+        String privateKey = getString(R.string.privateKey);
+        String publicKey = getString(R.string.publicKey);
+        String combination = timeStamp + privateKey + publicKey;
+        String hash = createHash(combination);
+        return combineLink(link, timeStamp, hash);
+    }
+
+    public String combineLink(String link, String timeStamp, String hash) {
+        // Creates the full link
+        return link + "&ts=" + timeStamp + "&apikey=" + getString(R.string.publicKey) +
+                "&hash=" + hash;
+    }
+
+    public String createHash(String combination) {
+        // Creates the hash code to validate the keys
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+            messageDigest.update(combination.getBytes(), 0, combination.length());
+            return new BigInteger(1, messageDigest.digest()).toString(16);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "Something went wrong";
+    }
+
+    public void contactApi(final String query) {
+        RequestQueue queue = Volley.newRequestQueue(getContext());
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, createLink(query),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("error",error.toString());
+                contactApi(query);
+            }
+        });
+        queue.add(stringRequest);
+    }
+    public ArrayList<comic> JSONify(String response){
+        ArrayList<comic> result = new ArrayList<comic>();
+        JSONArray subArray = new JSONArray();
+        try{
+            JSONObject object =(JSONObject) new JSONTokener(response).nextValue();
+            subArray = object.getJSONObject("data").getJSONArray("results");
+            result = stripComics(subArray);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public ArrayList<comic> stripComics(JSONArray comics){
+        ArrayList<comic> result = new ArrayList<comic>();
+        JSONObject extracted = new JSONObject();
+        for (int i=0;i<comics.length();i++) {
+            try {
+                extracted = comics.getJSONObject(i);
+                result.add(storeComics(extracted));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return result;
+    }
+
+    public comic storeComics(JSONObject extracted) {
+        comic result = null;
+        try {
+            result = new comic(extracted.getInt("id")
+                    ,extracted.getString("title")
+                    ,extracted.getDouble("issueNumber"),extracted.getString("description")
+                    ,extracted.getJSONObject("thumbnail").getString("path")
+                    ,extracted.getJSONObject("thumbnail").getString("extension"));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
     public void getCollection(){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -45,6 +152,7 @@ public class collectionView extends Fragment {
                         gridAdapter adapter = new gridAdapter(getContext(),collection,1);
                         GridView gridView = getView().findViewById(R.id.collectionGrid);
                         gridView.setAdapter(adapter);
+                        gridView.setOnItemClickListener(new showInfo());
                     }
 
                     @Override
@@ -63,6 +171,17 @@ public class collectionView extends Fragment {
         return collectionList;
     }
 
+    private class  showInfo implements AdapterView.OnItemClickListener{
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            ImageView comicImage = view.findViewById(R.id.icon);
+            String comicId = comicImage.getContentDescription().toString();
+            Log.d("Comid",comicId);
+            contactApi(comicId);
+
+
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

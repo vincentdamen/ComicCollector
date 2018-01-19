@@ -63,78 +63,6 @@ public class mainActivity extends AppCompatActivity {
             return false;
         }};
 
-    public String createLink(String query) {
-        // Creates the link to access the Marvel API
-        String link = getString(R.string.apiLink) + query;
-        String timeStamp = System.currentTimeMillis() / 1000 + "";
-        String privateKey = getString(R.string.privateKey);
-        String publicKey = getString(R.string.publicKey);
-        String combination = timeStamp + privateKey + publicKey;
-        String hash = createHash(combination);
-        return combineLink(link, timeStamp, hash);
-    }
-
-    public String combineLink(String link, String timeStamp, String hash) {
-        // Creates the full link
-        return link + "&ts=" + timeStamp + "&apikey=" + getString(R.string.publicKey) +
-                "&hash=" + hash;
-    }
-
-    public String createHash(String combination) {
-        // Creates the hash code to validate the keys
-        try {
-            MessageDigest messageDigest = MessageDigest.getInstance("MD5");
-            messageDigest.update(combination.getBytes(), 0, combination.length());
-            return new BigInteger(1, messageDigest.digest()).toString(16);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return "Something went wrong";
-    }
-
-    public void contactApi(String query) {
-        RequestQueue queue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, createLink(query),
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
-                        mTextMessage.setText(JSONify(response).toString());
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                mTextMessage.setText(error.toString());
-            }
-        });
-        queue.add(stringRequest);
-    }
-    public ArrayList<comic> JSONify(String response){
-        ArrayList<comic> result = new ArrayList<comic>();
-        JSONArray subArray = new JSONArray();
-        try{
-        JSONObject object =(JSONObject) new JSONTokener(response).nextValue();
-        subArray = object.getJSONObject("data").getJSONArray("results");
-        result = stripComics(subArray);
-        }
-        catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return result;
-        }
-
-    public ArrayList<comic> stripComics(JSONArray comics){
-        ArrayList<comic> result = new ArrayList<comic>();
-        /** MAAK HIER de class vanaf de api
-         * en gebruik uniforme functies
-         * Maak daarna de grid adapter
-          */
-
-        return result;
-    }
-
-
-
 
     public boolean checkLogin(){
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -163,7 +91,6 @@ public class mainActivity extends AppCompatActivity {
             openFragment();
             BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
             navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-            //contactApi("");
         }
     }
     @Override

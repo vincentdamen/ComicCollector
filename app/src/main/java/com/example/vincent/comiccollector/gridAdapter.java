@@ -18,7 +18,6 @@ import java.util.ArrayList;
 
 public class gridAdapter extends ArrayAdapter<ownedComic> {
 
-
     private Context context;
     private ArrayList<ownedComic> collection;
     public gridAdapter(@NonNull Context context, ArrayList<ownedComic> collection, int resource) {
@@ -40,9 +39,9 @@ public class gridAdapter extends ArrayAdapter<ownedComic> {
     public View assignInfo(View view,int position) {
         String imageUrl = collection.get(position).thumbLink +
                  "."+collection.get(position).thumbExt;
-        Log.d("image",imageUrl);
         ImageView imageView = view.findViewById(R.id.icon);
         Glide.with(context).load(imageUrl).into(imageView);
+        imageView.setContentDescription(collection.get(position).comicId+"");
         return view;
     }
 }
