@@ -35,5 +35,6 @@
     <string name="try_to_check_out_other_users_it_s_fun">Try to check out other users, it\'s fun!</string>
     <string name="LeaveWarning">Press back again to leave the application</string>
     <string name="limit">\?limit=100</string>
+    <string name="fix_summary">Is not available. I think it is an awesome comic!</string>
 
 </resources>

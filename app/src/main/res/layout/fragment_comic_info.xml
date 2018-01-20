@@ -9,7 +9,8 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimaryDark">
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/topLayout"
@@ -38,7 +39,6 @@
                         android:layout_marginBottom="16dp"
                         android:layout_marginTop="8dp"
                         android:fontFamily="@font/raleway"
-                        android:text="Baby's First Deadpool Book"
                         android:textAlignment="center"
                         android:textColor="@color/common_google_signin_btn_text_dark_default"
                         android:textSize="18sp"
@@ -61,7 +61,7 @@
                         android:layout_weight="1">
 
                         <ImageView
-                            android:id="@+id/imageView"
+                            android:id="@+id/cover"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
@@ -138,7 +138,6 @@
                                         android:layout_height="0dp"
                                         android:layout_marginEnd="8dp"
                                         android:fontFamily="@font/raleway"
-                                        android:text="Deadpool"
                                         android:textAlignment="textEnd"
                                         android:textAllCaps="false"
                                         android:textColor="@color/common_google_signin_btn_text_dark_default"
@@ -190,7 +189,6 @@
                                         android:layout_height="wrap_content"
                                         android:layout_marginEnd="8dp"
                                         android:fontFamily="@font/raleway"
-                                        android:text="1"
                                         android:textAlignment="textEnd"
                                         android:textAllCaps="false"
                                         android:textColor="@color/common_google_signin_btn_text_dark_default"
@@ -241,7 +239,6 @@
                                         android:layout_height="wrap_content"
                                         android:layout_marginEnd="8dp"
                                         android:fontFamily="@font/raleway"
-                                        android:text="1996"
                                         android:textAlignment="textEnd"
                                         android:textAllCaps="false"
                                         android:textColor="@color/common_google_signin_btn_text_dark_default"
@@ -292,7 +289,6 @@
                                         android:layout_height="wrap_content"
                                         android:layout_marginEnd="8dp"
                                         android:fontFamily="@font/raleway"
-                                        android:text="38"
                                         android:textAlignment="textEnd"
                                         android:textAllCaps="false"
                                         android:textColor="@color/common_google_signin_btn_text_dark_default"
@@ -344,7 +340,6 @@
                                         android:layout_marginEnd="8dp"
                                         android:fontFamily="@font/raleway"
                                         android:gravity="center_vertical"
-                                        android:text="Baby's First Deadpool Book (1998)"
                                         android:textAlignment="textEnd"
                                         android:textAllCaps="false"
                                         android:textColor="@color/common_google_signin_btn_text_dark_default"
@@ -353,7 +348,8 @@
                                         app:layout_constraintBottom_toBottomOf="parent"
                                         app:layout_constraintEnd_toEndOf="parent"
                                         app:layout_constraintStart_toStartOf="parent"
-                                        app:layout_constraintTop_toTopOf="parent" />
+                                        app:layout_constraintTop_toTopOf="parent"
+                                        tools:ignore="RtlCompat" />
                                 </android.support.constraint.ConstraintLayout>
                             </LinearLayout>
 
@@ -412,7 +408,6 @@
                         android:layout_weight="1"
                         android:fontFamily="@font/raleway"
                         android:gravity="center"
-                        android:text="6"
                         android:textAlignment="center"
                         android:textColor="@color/common_google_signin_btn_text_dark_default"
                         android:textSize="14sp"
@@ -426,7 +421,6 @@
                         android:layout_weight="1"
                         android:fontFamily="@font/raleway"
                         android:gravity="center"
-                        android:text="6"
                         android:textAlignment="center"
                         android:textColor="@color/common_google_signin_btn_text_dark_default"
                         android:textSize="14sp"
@@ -440,7 +434,6 @@
                         android:layout_weight="1"
                         android:fontFamily="@font/raleway"
                         android:gravity="center"
-                        android:text="7.8"
                         android:textAlignment="center"
                         android:textColor="@color/common_google_signin_btn_text_dark_default"
                         android:textSize="14sp"
@@ -454,7 +447,6 @@
                         android:layout_weight="1"
                         android:fontFamily="@font/raleway"
                         android:gravity="center"
-                        android:text="9.5"
                         android:textAlignment="center"
                         android:textColor="@color/common_google_signin_btn_text_dark_default"
                         android:textSize="14sp"
@@ -468,7 +460,6 @@
                         android:layout_weight="1"
                         android:fontFamily="@font/raleway"
                         android:gravity="center"
-                        android:text="10"
                         android:textAlignment="center"
                         android:textColor="@color/common_google_signin_btn_text_dark_default"
                         android:textSize="14sp"
@@ -495,7 +486,6 @@
                     android:layout_weight="3"
                     android:fontFamily="@font/raleway_thin"
                     android:gravity="center_horizontal|start"
-                    android:text="Three stories starring Deadpool! The Merc with a Mouth goes to the aquarium with Blind Al, learns to be a Good Samaritan with Captain America, and crashes a birthday party (literally) with Blarney the dinosaur!"
                     android:textColor="@color/common_google_signin_btn_text_dark_default"
                     android:textSize="14sp"
                     android:textStyle="bold"

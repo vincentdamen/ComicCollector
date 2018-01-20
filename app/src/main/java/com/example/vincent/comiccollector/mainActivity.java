@@ -2,6 +2,7 @@ package com.example.vincent.comiccollector;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -81,7 +82,7 @@ public class mainActivity extends AppCompatActivity {
         collectionView fragment = new collectionView();
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.targetFrame, fragment);
-        ft.commit();
+        ft.addToBackStack(null).commit();
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,34 +98,31 @@ public class mainActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         checkLogin();
+        backAdministration(true,getApplicationContext());
     }
 
-    private long backPressedTime = 0;
+    public static void backAdministration(boolean home,Context context) {
+        SharedPreferences sharedPref = context.getSharedPreferences("home",Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean("home", home);
+        editor.apply();
+    }
 
+    public boolean checkBackAdministration(){
+        SharedPreferences sharedPref = getApplication().getSharedPreferences("home",Context.MODE_PRIVATE);
+        boolean state = sharedPref.getBoolean("home",true);
+        return state;
+    }
     @Override
     public void onBackPressed() {
         // Hier worden de benodigde variabelen benoemd
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        long t = System.currentTimeMillis();
         navigation.setVisibility(View.VISIBLE);
-        // bij de eerste click wordt je teruggestuurd naar de homeScreen
-        if (t - backPressedTime > 2000) {
-            if (navigation.getSelectedItemId() != R.id.navigation_collection) {
-                FragmentManager fm = getSupportFragmentManager();
-                collectionView fragment = new collectionView();
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.replace(R.id.targetFrame, fragment);
-                navigation.setSelectedItemId(R.id.navigation_collection);
-                ft.commit();
-            }// 2 secs
-            backPressedTime = t;
-            Toast.makeText(this, R.string.LeaveWarning,
-                    Toast.LENGTH_SHORT).show();
-        }
-
-        // Kill de app
-        else {
+        if (!checkBackAdministration()) {
             super.onBackPressed();
+        }
+        else{
+            finish();
         }
     }
 

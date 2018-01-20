@@ -41,7 +41,6 @@ public class gridAdapter extends ArrayAdapter<ownedComic> {
                  "."+collection.get(position).thumbExt;
         ImageView imageView = view.findViewById(R.id.icon);
         Glide.with(context).load(imageUrl).into(imageView);
-        imageView.setContentDescription(collection.get(position).comicId+"");
         return view;
     }
 }

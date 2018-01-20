@@ -2,6 +2,7 @@ package com.example.vincent.comiccollector;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import android.support.annotation.Nullable;
@@ -47,132 +48,22 @@ import java.util.ArrayList;
 public class collectionView extends Fragment {
     GridView collectionGrid;
     mainActivity mainActivity;
+    ArrayList<ownedComic> collection = new ArrayList<ownedComic>();
 
     public collectionView() {
         // Required empty public constructor
     }
 
-    public String createLink(String query) {
-        // Creates the link to access the Marvel API
-        String link = getString(R.string.apiLink)+ query+ getString(R.string.limit);
-        String timeStamp = System.currentTimeMillis() / 1000 + "";
-        String privateKey = getString(R.string.privateKey);
-        String publicKey = getString(R.string.publicKey);
-        String combination = timeStamp + privateKey + publicKey;
-        String hash = createHash(combination);
-        return combineLink(link, timeStamp, hash);
-    }
 
-    public String combineLink(String link, String timeStamp, String hash) {
-        // Creates the full link
-        return link + "&ts=" + timeStamp + "&apikey=" + getString(R.string.publicKey) +
-                "&hash=" + hash;
-    }
 
-    public String createHash(String combination) {
-        // Creates the hash code to validate the keys
-        try {
-            MessageDigest messageDigest = MessageDigest.getInstance("MD5");
-            messageDigest.update(combination.getBytes(), 0, combination.length());
-            return new BigInteger(1, messageDigest.digest()).toString(16);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return "Something went wrong";
-    }
-
-    public void contactApi(final String query) {
-        RequestQueue queue = Volley.newRequestQueue(getContext());
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, createLink(query),
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d("test",JSONify(response).get(0).mainCharacter);
-                        openInfo();
-
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("error",error.toString());
-                contactApi(query);
-            }
-        });
-        queue.add(stringRequest);
-    }
-
-    private void openInfo() {
+    private void openInfo(int comicId,String condition) {
+        mainActivity.backAdministration(false,getContext());
         FragmentManager fm = getFragmentManager();
-        comicInfo fragment = new comicInfo();
+        comicInfo fragment = new comicInfo().newInstance(true,comicId,condition);
         FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.targetFrame, fragment);
-        ft.commit();
+        ft.add(R.id.targetFrame, fragment);
+        ft.addToBackStack(null).commit();
     }
-
-    public ArrayList<comic> JSONify(String response){
-        ArrayList<comic> result = new ArrayList<comic>();
-        JSONArray subArray = new JSONArray();
-        try{
-            JSONObject object =(JSONObject) new JSONTokener(response).nextValue();
-            subArray = object.getJSONObject("data").getJSONArray("results");
-            result = stripComics(subArray);
-        }
-        catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    public ArrayList<comic> stripComics(JSONArray comics){
-        ArrayList<comic> result = new ArrayList<comic>();
-        JSONObject extracted = new JSONObject();
-        for (int i=0;i<comics.length();i++) {
-            try {
-                extracted = comics.getJSONObject(i);
-                result.add(storeComics(extracted));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return result;
-    }
-
-    public comic storeComics(JSONObject extracted) {
-        comic result = null;
-        String mainCharacter = getMainCharacter(extracted);
-        try {
-            result = new comic(extracted.getInt("id")
-                    ,extracted.getString("title")
-                    ,extracted.getDouble("issueNumber")
-                    ,extracted.getString("description")
-                    ,extracted.getJSONObject("thumbnail").getString("path")
-                    ,extracted.getJSONObject("thumbnail").getString("extension")
-                    ,extracted.getInt("pageCount")
-                    ,extracted.getJSONObject("series").getString("name")
-                    ,extracted.getJSONArray("dates").getJSONObject(0)
-                    .getString("date").substring(0,4)
-                    ,mainCharacter);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-
-        }
-        return result;
-    }
-
-    private String getMainCharacter(JSONObject extracted) {
-        String result;
-        try {
-            result =extracted.getJSONObject("characters").getJSONArray("items")
-                    .getJSONObject(0).getString("name");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            result = "Unknown";
-        }
-        return result;
-    }
-
     public void getCollection(){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference nDatabase = database.getReference("Users");
@@ -182,7 +73,7 @@ public class collectionView extends Fragment {
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        ArrayList<ownedComic> collection = saveCollection(dataSnapshot);
+                        collection = saveCollection(dataSnapshot);
                         gridAdapter adapter = new gridAdapter(getContext(),collection,1);
                         GridView gridView = getView().findViewById(R.id.collectionGrid);
                         gridView.setAdapter(adapter);
@@ -208,9 +99,9 @@ public class collectionView extends Fragment {
     private class  showInfo implements AdapterView.OnItemClickListener{
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            ImageView comicImage = view.findViewById(R.id.icon);
-            String comicId = comicImage.getContentDescription().toString();
-            contactApi(comicId);
+            int comicId = collection.get(i).comicId;
+            String condition = collection.get(i).condition;
+            openInfo(comicId,condition);
 
 
         }
@@ -229,6 +120,7 @@ public class collectionView extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getCollection();
+        mainActivity.backAdministration(true,getContext());
 
     }
 }
