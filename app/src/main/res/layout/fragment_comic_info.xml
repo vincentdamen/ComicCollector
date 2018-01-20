@@ -12,40 +12,351 @@
         android:layout_height="match_parent">
 
         <android.support.constraint.ConstraintLayout
-            android:id="@+id/constraintLayout2"
+            android:id="@+id/topLayout"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/constraintLayout3"
+            app:layout_constraintBottom_toTopOf="@+id/descriptionLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <android.support.constraint.ConstraintLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:orientation="vertical">
 
-                <ImageView
-                    android:id="@+id/imageView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_weight="1"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/test"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </android.support.constraint.ConstraintLayout>
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="6">
+
+                    <TextView
+                        android:id="@+id/title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginTop="8dp"
+                        android:text="Baby's First Deadpool Book"
+                        android:textAlignment="center"
+                        android:textColor="@color/common_google_signin_btn_text_dark_default"
+                        android:textSize="18sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </android.support.constraint.ConstraintLayout>
+
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <android.support.constraint.ConstraintLayout
+                        android:id="@+id/imageContainer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <ImageView
+                            android:id="@+id/imageView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_weight="1"
+                            android:adjustViewBounds="true"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/test"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </android.support.constraint.ConstraintLayout>
+
+                    <android.support.constraint.ConstraintLayout
+                        android:id="@+id/infoContainer"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="4dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/imageContainer"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_marginBottom="8dp"
+                            android:orientation="vertical"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintVertical_bias="0.0">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="horizontal">
+
+                                <android.support.constraint.ConstraintLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="2">
+
+                                    <TextView
+                                        android:id="@+id/mainCharacterTitle"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="0dp"
+                                        android:fontFamily="@font/raleway"
+                                        android:gravity="center_vertical|start"
+                                        android:text="Main character:"
+                                        android:textAllCaps="false"
+                                        android:textColor="@color/common_google_signin_btn_text_dark_default"
+                                        android:textSize="13sp"
+                                        android:textStyle="bold"
+                                        android:typeface="normal"
+                                        app:layout_constraintBottom_toBottomOf="parent"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toTopOf="parent" />
+                                </android.support.constraint.ConstraintLayout>
+
+                                <android.support.constraint.ConstraintLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="3">
+
+                                    <TextView
+                                        android:id="@+id/mainCharacter"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="0dp"
+                                        android:fontFamily="@font/raleway"
+                                        android:gravity="left|center_vertical"
+                                        android:text="Deadpool"
+                                        android:textAllCaps="false"
+                                        android:textColor="@color/common_google_signin_btn_text_dark_default"
+                                        android:textSize="14sp"
+                                        android:typeface="normal"
+                                        app:layout_constraintBottom_toBottomOf="parent"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toTopOf="parent" />
+                                </android.support.constraint.ConstraintLayout>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="horizontal">
+
+                                <android.support.constraint.ConstraintLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="2">
+
+                                    <TextView
+                                        android:id="@+id/issueTitle"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="0dp"
+                                        android:fontFamily="@font/raleway"
+                                        android:gravity="center_vertical|start"
+                                        android:text="Issue number:"
+                                        android:textAllCaps="false"
+                                        android:textColor="@color/common_google_signin_btn_text_dark_default"
+                                        android:textSize="13sp"
+                                        android:textStyle="bold"
+                                        android:typeface="normal"
+                                        app:layout_constraintBottom_toBottomOf="parent"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toTopOf="parent" />
+                                </android.support.constraint.ConstraintLayout>
+
+                                <android.support.constraint.ConstraintLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="3">
+
+                                    <TextView
+                                        android:id="@+id/issue"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="0dp"
+                                        android:fontFamily="@font/raleway"
+                                        android:gravity="left|center_vertical"
+                                        android:text="1"
+                                        android:textAllCaps="false"
+                                        android:textColor="@color/common_google_signin_btn_text_dark_default"
+                                        android:textSize="14sp"
+                                        android:typeface="normal"
+                                        app:layout_constraintBottom_toBottomOf="parent"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toTopOf="parent" />
+                                </android.support.constraint.ConstraintLayout>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="horizontal">
+
+                                <android.support.constraint.ConstraintLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="2">
+
+                                    <TextView
+                                        android:id="@+id/yearTitle"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="0dp"
+                                        android:fontFamily="@font/raleway"
+                                        android:gravity="center_vertical|start"
+                                        android:text="Release year:"
+                                        android:textAllCaps="false"
+                                        android:textColor="@color/common_google_signin_btn_text_dark_default"
+                                        android:textSize="13sp"
+                                        android:textStyle="bold"
+                                        android:typeface="normal"
+                                        app:layout_constraintBottom_toBottomOf="parent"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toTopOf="parent" />
+                                </android.support.constraint.ConstraintLayout>
+
+                                <android.support.constraint.ConstraintLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="3">
+
+                                    <TextView
+                                        android:id="@+id/year"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="0dp"
+                                        android:fontFamily="@font/raleway"
+                                        android:gravity="left|center_vertical"
+                                        android:text="1996"
+                                        android:textAllCaps="false"
+                                        android:textColor="@color/common_google_signin_btn_text_dark_default"
+                                        android:textSize="14sp"
+                                        android:typeface="normal"
+                                        app:layout_constraintBottom_toBottomOf="parent"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toTopOf="parent" />
+                                </android.support.constraint.ConstraintLayout>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="horizontal">
+
+                                <android.support.constraint.ConstraintLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="2">
+
+                                    <TextView
+                                        android:id="@+id/pageCountTitle"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="0dp"
+                                        android:fontFamily="@font/raleway"
+                                        android:gravity="center_vertical|start"
+                                        android:text="Pages:"
+                                        android:textAllCaps="false"
+                                        android:textColor="@color/common_google_signin_btn_text_dark_default"
+                                        android:textSize="13sp"
+                                        android:textStyle="bold"
+                                        android:typeface="normal"
+                                        app:layout_constraintBottom_toBottomOf="parent"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toTopOf="parent" />
+                                </android.support.constraint.ConstraintLayout>
+
+                                <android.support.constraint.ConstraintLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="3">
+
+                                    <TextView
+                                        android:id="@+id/pageCount"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="0dp"
+                                        android:fontFamily="@font/raleway"
+                                        android:gravity="left|center_vertical"
+                                        android:text="38"
+                                        android:textAllCaps="false"
+                                        android:textColor="@color/common_google_signin_btn_text_dark_default"
+                                        android:textSize="14sp"
+                                        android:typeface="normal"
+                                        app:layout_constraintBottom_toBottomOf="parent"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toTopOf="parent" />
+                                </android.support.constraint.ConstraintLayout>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="2"
+                                android:orientation="horizontal">
+
+                                <android.support.constraint.ConstraintLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="2">
+
+                                    <TextView
+                                        android:id="@+id/seriesTitle"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="0dp"
+                                        android:fontFamily="@font/raleway"
+                                        android:gravity="center_vertical|start"
+                                        android:text="Series:"
+                                        android:textAllCaps="false"
+                                        android:textColor="@color/common_google_signin_btn_text_dark_default"
+                                        android:textSize="13sp"
+                                        android:textStyle="bold"
+                                        android:typeface="normal"
+                                        app:layout_constraintBottom_toBottomOf="parent"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toTopOf="parent" />
+                                </android.support.constraint.ConstraintLayout>
+
+                                <android.support.constraint.ConstraintLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1">
+
+                                    <TextView
+                                        android:id="@+id/series"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="0dp"
+                                        android:fontFamily="@font/raleway"
+                                        android:gravity="left|center_vertical"
+                                        android:text="Baby's First Deadpool Book (1998)"
+                                        android:textAlignment="center"
+                                        android:textAllCaps="false"
+                                        android:textColor="@color/common_google_signin_btn_text_dark_default"
+                                        android:textSize="14sp"
+                                        android:typeface="normal"
+                                        app:layout_constraintBottom_toBottomOf="parent"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toTopOf="parent" />
+                                </android.support.constraint.ConstraintLayout>
+                            </LinearLayout>
+
+                        </LinearLayout>
+                    </android.support.constraint.ConstraintLayout>
+                </android.support.constraint.ConstraintLayout>
+            </LinearLayout>
 
         </android.support.constraint.ConstraintLayout>
 
         <android.support.constraint.ConstraintLayout
-            android:id="@+id/constraintLayout3"
+            android:id="@+id/descriptionLayout"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginBottom="16dp"
@@ -56,8 +367,74 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout2">
+            app:layout_constraintTop_toBottomOf="@+id/topLayout">
 
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginEnd="8dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/owned"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/raleway"
+                        android:gravity="center"
+                        android:text="Owned:"
+                        android:textColor="@color/common_google_signin_btn_text_dark_default"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:typeface="normal" />
+
+                    <TextView
+                        android:id="@+id/owned2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/raleway_thin"
+                        android:gravity="center"
+                        android:text="1x Used 1x Mint"
+                        android:textColor="@color/common_google_signin_btn_text_dark_default"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:typeface="normal" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/textView14"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/raleway"
+                    android:gravity="bottom|start"
+                    android:text="Summary:"
+                    android:textColor="@color/common_google_signin_btn_text_dark_default"
+                    android:textStyle="bold"
+                    android:typeface="normal" />
+
+                <TextView
+                    android:id="@+id/description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:fontFamily="@font/raleway_thin"
+                    android:gravity="center_horizontal|start"
+                    android:text="Three stories starring Deadpool! The Merc with a Mouth goes to the aquarium with Blind Al, learns to be a Good Samaritan with Captain America, and crashes a birthday party (literally) with Blarney the dinosaur!"
+                    android:textColor="@color/common_google_signin_btn_text_dark_default"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:typeface="normal" />
+            </LinearLayout>
         </android.support.constraint.ConstraintLayout>
     </android.support.constraint.ConstraintLayout>
 

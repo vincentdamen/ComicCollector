@@ -6,6 +6,8 @@ import android.os.Bundle;
 
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -85,6 +87,8 @@ public class collectionView extends Fragment {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        Log.d("test",JSONify(response).get(0).mainCharacter);
+                        openInfo();
 
                     }
                 }, new Response.ErrorListener() {
@@ -96,6 +100,15 @@ public class collectionView extends Fragment {
         });
         queue.add(stringRequest);
     }
+
+    private void openInfo() {
+        FragmentManager fm = getFragmentManager();
+        comicInfo fragment = new comicInfo();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.targetFrame, fragment);
+        ft.commit();
+    }
+
     public ArrayList<comic> JSONify(String response){
         ArrayList<comic> result = new ArrayList<comic>();
         JSONArray subArray = new JSONArray();
@@ -127,18 +140,39 @@ public class collectionView extends Fragment {
 
     public comic storeComics(JSONObject extracted) {
         comic result = null;
+        String mainCharacter = getMainCharacter(extracted);
         try {
             result = new comic(extracted.getInt("id")
                     ,extracted.getString("title")
-                    ,extracted.getDouble("issueNumber"),extracted.getString("description")
+                    ,extracted.getDouble("issueNumber")
+                    ,extracted.getString("description")
                     ,extracted.getJSONObject("thumbnail").getString("path")
-                    ,extracted.getJSONObject("thumbnail").getString("extension"));
+                    ,extracted.getJSONObject("thumbnail").getString("extension")
+                    ,extracted.getInt("pageCount")
+                    ,extracted.getJSONObject("series").getString("name")
+                    ,extracted.getJSONArray("dates").getJSONObject(0)
+                    .getString("date").substring(0,4)
+                    ,mainCharacter);
 
         } catch (JSONException e) {
             e.printStackTrace();
+
         }
         return result;
     }
+
+    private String getMainCharacter(JSONObject extracted) {
+        String result;
+        try {
+            result =extracted.getJSONObject("characters").getJSONArray("items")
+                    .getJSONObject(0).getString("name");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            result = "Unknown";
+        }
+        return result;
+    }
+
     public void getCollection(){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference nDatabase = database.getReference("Users");
@@ -176,7 +210,6 @@ public class collectionView extends Fragment {
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             ImageView comicImage = view.findViewById(R.id.icon);
             String comicId = comicImage.getContentDescription().toString();
-            Log.d("Comid",comicId);
             contactApi(comicId);
 
 

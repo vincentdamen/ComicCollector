@@ -1,14 +1,5 @@
 package com.example.vincent.comiccollector;
 
-import android.media.Image;
-
-import org.json.JSONArray;
-
-import java.util.ArrayList;
-
-/**
- * Created by Vincent on 14-1-2018.
- */
 
 public class comic {
     public int id;
@@ -17,6 +8,10 @@ public class comic {
     public String description;
     public String ThumbLink;
     public String ThumbExt;
+    public int pageCount;
+    public String series;
+    public String year;
+    public String mainCharacter;
 
 
     public comic(int id,
@@ -24,14 +19,21 @@ public class comic {
             double issueNumber,
             String description,
             String ThumbLink,
-            String ThumbExt){
+            String ThumbExt,
+            int pageCount,
+            String series,
+            String year,
+            String mainCharacter){
         this.id=id;
         this.title=title;
         this.issueNumber=issueNumber;
         this.description=description;
         this.ThumbLink=ThumbLink;
         this.ThumbExt=ThumbExt;
-
+        this.pageCount=pageCount;
+        this.series=series;
+        this.year=year;
+        this.mainCharacter=mainCharacter;
     }
 
 }
