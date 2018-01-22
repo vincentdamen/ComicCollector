@@ -19,7 +19,9 @@
             android:numColumns="3"
             android:padding="16dp"
             android:verticalSpacing="4dp"
-            tools:targetApi="o">
+            tools:targetApi="o"
+            android:scrollbars="none"
+            >
 
         </GridView>
 

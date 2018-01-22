@@ -36,8 +36,8 @@ import java.util.Objects;
 public class comicInfo extends Fragment {
     mainActivity mainActivity;
     ArrayList<Integer> scoreId= new ArrayList<Integer>();
-    static String apiLink = "http://gateway.marvel.com/v1/public/comics/";
-    static String limit = "?limit=20";
+    static String apiLink = "http://gateway.marvel.com/v1/public/comics";
+    static String limit = "?limit=50";
     static String privateKey =  "160ba682255404c4190a9076642cacae20f9f4cf";
     static String publicKey = "25119df35812e08ad556e1341e548b06";
     static String errorHandler = "Is not available. I think it is an awesome comic!";
@@ -72,21 +72,25 @@ public class comicInfo extends Fragment {
         return view;
     }
 
-    public static String createLink(String query) {
+    public static String createLink(String query,int type) {
         // Creates the link to access the Marvel API
-        String link;
-        if(Objects.equals(query, "null")){
-            link = apiLink.substring(0,apiLink.length()-1);
-            link = link +  limit;
-        }
-        else{
-            link = apiLink+ query+ limit;
-        }
+        String link = placeQuery(query,type);
         String timeStamp = System.currentTimeMillis() / 1000 + "";
-
         String combination = timeStamp + privateKey + publicKey;
         String hash = createHash(combination);
         return combineLink(link, timeStamp, hash);
+    }
+
+    public static String placeQuery(String query, int type) {
+        // Specific comic
+        if(type==0){
+            return apiLink+"/"+ query+ limit;
+        }
+        // Offset
+        else if (type==1){
+            return apiLink+limit+"&offset="+query;
+        }
+        return apiLink+limit;
     }
 
     public static String combineLink(String link, String timeStamp, String hash) {
@@ -109,7 +113,7 @@ public class comicInfo extends Fragment {
 
     public void getInfo(final String query) {
         RequestQueue queue = Volley.newRequestQueue(getContext());
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, createLink(query),
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, createLink(query,0),
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {

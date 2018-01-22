@@ -25,6 +25,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Random;
 
 
 /**
@@ -39,10 +40,14 @@ public class browseComic extends Fragment {
     public browseComic() {
     }
 
+    public String randomOffset(){
+        Random rand = new Random();
+        return rand.nextInt(41007) + 1+"";
+    }
 
     public void getComics(final String query){
         RequestQueue queue = Volley.newRequestQueue(getContext());
-        String link = comicInfo.createLink(query);
+        String link = comicInfo.createLink(query,1);
         StringRequest stringRequest = new StringRequest(Request.Method.GET,
                 link,
                 new Response.Listener<String>() {
@@ -105,7 +110,7 @@ public class browseComic extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getComics("null");
+        getComics(randomOffset());
         mainActivity.backAdministration(true,getContext());
 
 
