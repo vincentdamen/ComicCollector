@@ -41,6 +41,8 @@ public class comicInfo extends Fragment {
     static String privateKey =  "160ba682255404c4190a9076642cacae20f9f4cf";
     static String publicKey = "25119df35812e08ad556e1341e548b06";
     static String errorHandler = "Is not available. I think it is an awesome comic!";
+    static String backUpLink = "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available/portrait_uncanny.jpg";
+    static String deadLink = "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg";
 
 
     public comicInfo newInstance( Boolean collected, int comicId,String condition ) {
@@ -248,6 +250,9 @@ public class comicInfo extends Fragment {
     }
     public void setImageView(Integer id, String link, View view, Context context) {
         ImageView imageView = view.findViewById(id);
+        if(link==deadLink){
+            link = backUpLink;
+        }
         Glide.with(context).load(link).into(imageView);
     }
     public ArrayList<Double> stripScores(String condition) {

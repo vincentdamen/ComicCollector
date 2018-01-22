@@ -19,6 +19,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -36,6 +43,7 @@ public class browseComic extends Fragment {
     collectionView collectionView;
     ArrayList<ownedComic> transposed;
     comicInfo comicInfo;
+    String offset;
 
     public browseComic() {
     }
@@ -70,7 +78,25 @@ public class browseComic extends Fragment {
         queue.add(stringRequest);
     }
 
-    private class viewComic implements android.widget.AdapterView.OnItemClickListener {
+    public void checkIfOwned(int id){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference nDatabase = database.getReference("Users");
+        final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser userId = mAuth.getCurrentUser();
+        nDatabase.child(userId.getUid()).child("collection").addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+        private class viewComic implements android.widget.AdapterView.OnItemClickListener {
 
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -86,7 +112,8 @@ public class browseComic extends Fragment {
                     0,
                     "",
                     comic.thumbExt,
-                    comic.thumbLink);
+                    comic.thumbLink,
+                    comic.title);
             result.add(transformer);
         }
         return result;
@@ -97,7 +124,7 @@ public class browseComic extends Fragment {
         FragmentManager fm = getFragmentManager();
         comicInfo fragment = new comicInfo().newInstance(false,comicId,condition);
         FragmentTransaction ft = fm.beginTransaction();
-        ft.add(R.id.targetFrame, fragment);
+        ft.replace(R.id.targetFrame, fragment);
         ft.addToBackStack(null).commit();
     }
     @Override
@@ -110,10 +137,20 @@ public class browseComic extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getComics(randomOffset());
+        String oldOffset= mainActivity.getOffset(getContext());
+        if(oldOffset!="null"){
+            offset = oldOffset;}
+        else{
+            offset = randomOffset();
+            mainActivity.saveOffset(offset,getContext());}
+        getComics(offset);
         mainActivity.backAdministration(true,getContext());
-
-
+    }
+    @Override
+    public void onResume() {
+        getComics(offset);
+        mainActivity.backAdministration(true,getContext());
+        super.onResume();
     }
 
 

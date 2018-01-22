@@ -60,7 +60,7 @@ public class collectionView extends Fragment {
         FragmentManager fm = getFragmentManager();
         comicInfo fragment = new comicInfo().newInstance(true,comicId,condition);
         FragmentTransaction ft = fm.beginTransaction();
-        ft.add(R.id.targetFrame, fragment);
+        ft.replace(R.id.targetFrame, fragment);
         ft.addToBackStack(null).commit();
     }
     public void getCollection(){
@@ -122,5 +122,12 @@ public class collectionView extends Fragment {
         getCollection();
         mainActivity.backAdministration(true,getContext());
 
+    }
+
+    @Override
+    public void onResume() {
+        getCollection();
+        mainActivity.backAdministration(true,getContext());
+        super.onResume();
     }
 }

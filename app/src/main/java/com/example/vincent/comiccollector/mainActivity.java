@@ -84,7 +84,7 @@ public class mainActivity extends AppCompatActivity {
         collectionView fragment = new collectionView();
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.targetFrame, fragment);
-        ft.addToBackStack(null).commit();
+        ft.commit();
     }
 
     public void openBrowse(){
@@ -92,7 +92,7 @@ public class mainActivity extends AppCompatActivity {
         browseComic fragment1 = new browseComic();
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.targetFrame, fragment1);
-        ft.addToBackStack(null).commit();
+        ft.commit();
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +123,20 @@ public class mainActivity extends AppCompatActivity {
         editor.putBoolean("home", !checkBackAdministration());
         editor.apply();
     }
+    public static void saveOffset(String offset,Context context){
+        SharedPreferences sharedPref1 = context.getSharedPreferences("home",Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref1.edit();
+        editor.putString("offset", offset);
+        editor.apply();
+    }
+    public static String getOffset(Context context){
+        SharedPreferences sharedPref =  context.getSharedPreferences("home",Context.MODE_PRIVATE);
+        return sharedPref.getString("offset","null");
+    }
+    public static  void removeOffset(Context context){
+        SharedPreferences sharedPref = context.getSharedPreferences("home",Context.MODE_PRIVATE);
+        sharedPref.edit().remove("offset").commit();
+    }
     public boolean checkBackAdministration(){
         SharedPreferences sharedPref = getApplication().getSharedPreferences("home",Context.MODE_PRIVATE);
         boolean state = sharedPref.getBoolean("home",true);
@@ -138,9 +152,11 @@ public class mainActivity extends AppCompatActivity {
             reverseBackAdministration();
         }
         else{
+            removeOffset(getApplicationContext());
             finish();
         }
     }
+
 
 
 
