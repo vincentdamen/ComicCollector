@@ -4,7 +4,9 @@ package com.example.vincent.comiccollector;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +45,8 @@ public class comicInfo extends Fragment {
     static String errorHandler = "Is not available. I think it is an awesome comic!";
     static String backUpLink = "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available/portrait_uncanny.jpg";
     static String deadLink = "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg";
+    FloatingActionButton edit;
+    int comicId;
 
 
     public comicInfo newInstance( Boolean collected, int comicId,String condition ) {
@@ -65,11 +69,16 @@ public class comicInfo extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =inflater.inflate(R.layout.fragment_comic_info, container, false);
+        edit = view.findViewById(R.id.edit);
+        edit.setOnClickListener(new addComic());
         if(getArguments().getBoolean("collected")){
+            edit.setOnClickListener(new editComic());
+            edit.setImageResource(R.drawable.ic_create_white_24dp);
+
             String condition = getArguments().getString("condition");
             view = setScores(condition, view);
         }
-        int comicId = getArguments().getInt("comicId");
+        comicId = getArguments().getInt("comicId");
         getInfo(comicId+"");
         return view;
     }
@@ -133,7 +142,6 @@ public class comicInfo extends Fragment {
         queue.add(stringRequest);
     }
 
-
     public static ArrayList<comic> JSONify(String response){
         ArrayList<comic> result = new ArrayList<comic>();
         JSONArray subArray = new JSONArray();
@@ -162,7 +170,6 @@ public class comicInfo extends Fragment {
 
         return result;
     }
-
 
     public static comic storeComics(JSONObject extracted) {
         comic result = null;
@@ -202,7 +209,6 @@ public class comicInfo extends Fragment {
         return result;
     }
 
-
     public static String getMainCharacter(JSONObject extracted) {
         String result;
         try {
@@ -234,7 +240,6 @@ public class comicInfo extends Fragment {
         return result;
     }
 
-
     public View setScores(String condition, View view) {
         ArrayList<Double> scores = stripScores(condition);
         scoreId = setScoreId();
@@ -244,10 +249,11 @@ public class comicInfo extends Fragment {
         return view;
     }
 
-    public void setTextView(Integer id, String input,View view) {
+    public static void setTextView(Integer id, String input,View view) {
         TextView textView = view.findViewById(id);
         textView.setText(input);
     }
+
     public void setImageView(Integer id, String link, View view, Context context) {
         ImageView imageView = view.findViewById(id);
         if(link==deadLink){
@@ -255,6 +261,7 @@ public class comicInfo extends Fragment {
         }
         Glide.with(context).load(link).into(imageView);
     }
+
     public ArrayList<Double> stripScores(String condition) {
         ArrayList<Double> result = new ArrayList<Double>();
         String[] values = condition.split(",");
@@ -281,4 +288,20 @@ public class comicInfo extends Fragment {
         mainActivity.backAdministration(false,getContext());
     }
 
+    private class addComic implements FloatingActionButton.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            addComicDialog fragment3 = new addComicDialog().newInstance(comicId);
+            fragment3.show(ft, "dialog");
+        }
+    }
+
+    private class editComic implements FloatingActionButton.OnClickListener {
+
+        @Override
+        public void onClick(View view) {
+
+        }
+    }
 }

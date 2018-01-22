@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -35,6 +36,7 @@ import java.util.Objects;
 import java.util.Random;
 
 
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -42,6 +44,7 @@ public class browseComic extends Fragment {
     mainActivity mainActivity;
     collectionView collectionView;
     ArrayList<ownedComic> transposed;
+    ArrayList<ownedComic> collection;
     comicInfo comicInfo;
     String offset;
 
@@ -67,6 +70,8 @@ public class browseComic extends Fragment {
                         GridView gridView = getView().findViewById(R.id.browseGrid);
                         gridView.setAdapter(adapter);
                         gridView.setOnItemClickListener(new viewComic());
+                        gridView.setOnItemLongClickListener(new checkTitle());
+
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -78,7 +83,7 @@ public class browseComic extends Fragment {
         queue.add(stringRequest);
     }
 
-    public void checkIfOwned(int id){
+    public void getCollection(){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference nDatabase = database.getReference("Users");
         final FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -87,8 +92,8 @@ public class browseComic extends Fragment {
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
+                        collection = collectionView.saveCollection(dataSnapshot);
                     }
-
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
 
@@ -96,17 +101,37 @@ public class browseComic extends Fragment {
                 });
     }
 
-        private class viewComic implements android.widget.AdapterView.OnItemClickListener {
+    private class checkTitle implements AdapterView.OnItemLongClickListener{
+
+        @Override
+        public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+            CharSequence text = transposed.get(i).title;
+            int duration = Toast.LENGTH_SHORT;
+            Toast toast = Toast.makeText(getContext(), text, duration);
+            toast.show();
+            return true;
+        }
+    }
+
+    private class viewComic implements AdapterView.OnItemClickListener {
 
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            boolean owned =false;
+            for(ownedComic comic:collection){
+                if (comic.comicId==transposed.get(i).comicId){
+                    owned=true;
+                    openInfo(comic.comicId,comic.condition,owned);
+                }
+            }
+            if(!owned){
             int comicId = transposed.get(i).comicId;
             String condition = transposed.get(i).condition;
-            openInfo(comicId,condition);
+            openInfo(comicId,condition,owned);}
         }
     }
     public ArrayList<ownedComic> prepareComic(ArrayList<comic> input) {
-        ArrayList<ownedComic> result = new ArrayList<ownedComic>();
+        transposed = new ArrayList<ownedComic>();
         for(comic comic:input){
             ownedComic transformer = new ownedComic(comic.id,
                     0,
@@ -114,15 +139,15 @@ public class browseComic extends Fragment {
                     comic.thumbExt,
                     comic.thumbLink,
                     comic.title);
-            result.add(transformer);
-        }
-        return result;
+            transposed.add(transformer);
+            }
+        return transposed;
     }
 
-    public void openInfo(int comicId,String condition) {
+    public void openInfo(int comicId,String condition,Boolean owned) {
         mainActivity.backAdministration(false,getContext());
         FragmentManager fm = getFragmentManager();
-        comicInfo fragment = new comicInfo().newInstance(false,comicId,condition);
+        comicInfo fragment = new comicInfo().newInstance(owned,comicId,condition);
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.targetFrame, fragment);
         ft.addToBackStack(null).commit();
@@ -137,8 +162,9 @@ public class browseComic extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getCollection();
         String oldOffset= mainActivity.getOffset(getContext());
-        if(oldOffset!="null"){
+        if(!Objects.equals(oldOffset, "null")){
             offset = oldOffset;}
         else{
             offset = randomOffset();

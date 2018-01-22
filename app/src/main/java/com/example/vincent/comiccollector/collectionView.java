@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 
 import com.android.volley.Request;
@@ -77,6 +78,7 @@ public class collectionView extends Fragment {
                         GridView gridView = getView().findViewById(R.id.collectionGrid);
                         gridView.setAdapter(adapter);
                         gridView.setOnItemClickListener(new showInfo());
+                        gridView.setOnItemLongClickListener(new checkTitle());
                     }
 
                     @Override
@@ -86,7 +88,7 @@ public class collectionView extends Fragment {
                 });
     }
 
-    public ArrayList<ownedComic> saveCollection(DataSnapshot dataSnapshot) {
+    public static ArrayList<ownedComic> saveCollection(DataSnapshot dataSnapshot) {
         ArrayList<ownedComic> collectionList = new ArrayList<ownedComic>();
         for (DataSnapshot noteDataSnapshot : dataSnapshot.getChildren()) {
             ownedComic comicBook = noteDataSnapshot.getValue(ownedComic.class);
@@ -104,6 +106,17 @@ public class collectionView extends Fragment {
             openInfo(comicId,condition);
 
 
+        }
+    }
+    private class checkTitle implements android.widget.AdapterView.OnItemLongClickListener{
+
+        @Override
+        public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+            CharSequence text = collection.get(i).title;
+            int duration = Toast.LENGTH_SHORT;
+            Toast toast = Toast.makeText(getContext(), text, duration);
+            toast.show();
+            return true;
         }
     }
 
