@@ -39,9 +39,10 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class mainActivity extends AppCompatActivity {
-
+    comicInfo comicInfo;
     private TextView mTextMessage;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -50,9 +51,10 @@ public class mainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_collection:
-                    openFragment();
+                    openCollection();
                     return true;
                 case R.id.navigation_browse:
+                    openBrowse();
                     return true;
                 case R.id.navigation_search:
                     return true;
@@ -77,11 +79,19 @@ public class mainActivity extends AppCompatActivity {
     return true;}
 
 
-    public void openFragment(){
+    public void openCollection(){
         FragmentManager fm = getSupportFragmentManager();
         collectionView fragment = new collectionView();
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.targetFrame, fragment);
+        ft.addToBackStack(null).commit();
+    }
+
+    public void openBrowse(){
+        FragmentManager fm = getSupportFragmentManager();
+        browseComic fragment1 = new browseComic();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.targetFrame, fragment1);
         ft.addToBackStack(null).commit();
     }
     @Override
@@ -89,7 +99,7 @@ public class mainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         if (checkLogin()) {
             setContentView(R.layout.activity_main);
-            openFragment();
+            openCollection();
             BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
             navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         }
@@ -107,7 +117,12 @@ public class mainActivity extends AppCompatActivity {
         editor.putBoolean("home", home);
         editor.apply();
     }
-
+    public void reverseBackAdministration(){
+        SharedPreferences sharedPref1 = this.getSharedPreferences("home",Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref1.edit();
+        editor.putBoolean("home", !checkBackAdministration());
+        editor.apply();
+    }
     public boolean checkBackAdministration(){
         SharedPreferences sharedPref = getApplication().getSharedPreferences("home",Context.MODE_PRIVATE);
         boolean state = sharedPref.getBoolean("home",true);
@@ -120,10 +135,13 @@ public class mainActivity extends AppCompatActivity {
         navigation.setVisibility(View.VISIBLE);
         if (!checkBackAdministration()) {
             super.onBackPressed();
+            reverseBackAdministration();
         }
         else{
             finish();
         }
     }
+
+
 
 }

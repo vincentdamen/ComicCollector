@@ -6,8 +6,8 @@ public class comic {
     public String title;
     public double issueNumber;
     public String description;
-    public String ThumbLink;
-    public String ThumbExt;
+    public String thumbLink;
+    public String thumbExt;
     public int pageCount;
     public String series;
     public String year;
@@ -28,8 +28,8 @@ public class comic {
         this.title=title;
         this.issueNumber=issueNumber;
         this.description=description;
-        this.ThumbLink=ThumbLink;
-        this.ThumbExt=ThumbExt;
+        this.thumbLink=ThumbLink;
+        this.thumbExt=ThumbExt;
         this.pageCount=pageCount;
         this.series=series;
         this.year=year;

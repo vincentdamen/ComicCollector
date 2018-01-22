@@ -24,43 +24,78 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import org.w3c.dom.Text;
 
-import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.Objects;
 
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class comicInfo extends Fragment {
     mainActivity mainActivity;
     ArrayList<Integer> scoreId= new ArrayList<Integer>();
+    static String apiLink = "http://gateway.marvel.com/v1/public/comics/";
+    static String limit = "?limit=20";
+    static String privateKey =  "160ba682255404c4190a9076642cacae20f9f4cf";
+    static String publicKey = "25119df35812e08ad556e1341e548b06";
+    static String errorHandler = "Is not available. I think it is an awesome comic!";
 
 
-    public String createLink(String query) {
+    public comicInfo newInstance( Boolean collected, int comicId,String condition ) {
+        comicInfo f = new comicInfo();
+        Bundle args = new Bundle();
+        args.putBoolean("collected", collected);
+        args.putInt("comicId",comicId);
+        args.putString("condition",condition);
+        f.setArguments(args);
+        return f;
+    }
+
+    public comicInfo() {
+        // Required empty public constructor
+    }
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view =inflater.inflate(R.layout.fragment_comic_info, container, false);
+        if(getArguments().getBoolean("collected")){
+            String condition = getArguments().getString("condition");
+            view = setScores(condition, view);
+        }
+        int comicId = getArguments().getInt("comicId");
+        getInfo(comicId+"");
+        return view;
+    }
+
+    public static String createLink(String query) {
         // Creates the link to access the Marvel API
-        String link = getString(R.string.apiLink)+ query+ getString(R.string.limit);
+        String link;
+        if(Objects.equals(query, "null")){
+            link = apiLink.substring(0,apiLink.length()-1);
+            link = link +  limit;
+        }
+        else{
+            link = apiLink+ query+ limit;
+        }
         String timeStamp = System.currentTimeMillis() / 1000 + "";
-        String privateKey = getString(R.string.privateKey);
-        String publicKey = getString(R.string.publicKey);
+
         String combination = timeStamp + privateKey + publicKey;
         String hash = createHash(combination);
         return combineLink(link, timeStamp, hash);
     }
 
-    public String combineLink(String link, String timeStamp, String hash) {
+    public static String combineLink(String link, String timeStamp, String hash) {
         // Creates the full link
-        return link + "&ts=" + timeStamp + "&apikey=" + getString(R.string.publicKey) +
+        return link + "&ts=" + timeStamp + "&apikey=" + publicKey +
                 "&hash=" + hash;
     }
 
-    public String createHash(String combination) {
+    public static String createHash(String combination) {
         // Creates the hash code to validate the keys
         try {
             MessageDigest messageDigest = MessageDigest.getInstance("MD5");
@@ -72,7 +107,7 @@ public class comicInfo extends Fragment {
         return "Something went wrong";
     }
 
-    public void contactApi(final String query) {
+    public void getInfo(final String query) {
         RequestQueue queue = Volley.newRequestQueue(getContext());
         StringRequest stringRequest = new StringRequest(Request.Method.GET, createLink(query),
                 new Response.Listener<String>() {
@@ -86,14 +121,14 @@ public class comicInfo extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("error",error.toString());
-                contactApi(query);
+                getInfo(query);
             }
         });
         queue.add(stringRequest);
     }
 
 
-    public ArrayList<comic> JSONify(String response){
+    public static ArrayList<comic> JSONify(String response){
         ArrayList<comic> result = new ArrayList<comic>();
         JSONArray subArray = new JSONArray();
         try{
@@ -107,7 +142,7 @@ public class comicInfo extends Fragment {
         return result;
     }
 
-    public ArrayList<comic> stripComics(JSONArray comics){
+    public static ArrayList<comic> stripComics(JSONArray comics){
         ArrayList<comic> result = new ArrayList<comic>();
         JSONObject extracted = new JSONObject();
         for (int i=0;i<comics.length();i++) {
@@ -123,7 +158,7 @@ public class comicInfo extends Fragment {
     }
 
 
-    public comic storeComics(JSONObject extracted) {
+    public static comic storeComics(JSONObject extracted) {
         comic result = null;
         String mainCharacter = getMainCharacter(extracted);
         String description = getDescription(extracted);
@@ -147,12 +182,12 @@ public class comicInfo extends Fragment {
         return result;
     }
 
-    public String getDescription(JSONObject extracted) {
+    public static String getDescription(JSONObject extracted) {
         String result= null;
         try {
             result = extracted.getString("description");
-            if(result=="null"){
-                result=getString(R.string.fix_summary);
+            if(Objects.equals(result, "null")){
+                result=errorHandler;
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -162,8 +197,7 @@ public class comicInfo extends Fragment {
     }
 
 
-
-    public String getMainCharacter(JSONObject extracted) {
+    public static String getMainCharacter(JSONObject extracted) {
         String result;
         try {
             result =extracted.getJSONObject("characters").getJSONArray("items")
@@ -174,48 +208,25 @@ public class comicInfo extends Fragment {
         return result;
     }
 
-    public comicInfo newInstance( Boolean collected, int comicId,String condition ) {
-        comicInfo f = new comicInfo();
-        Bundle args = new Bundle();
-        args.putBoolean("collected", collected);
-        args.putInt("comicId",comicId);
-        args.putString("condition",condition);
-        f.setArguments(args);
-        return f;
-    }
-    public comicInfo() {
-        // Required empty public constructor
-    }
-
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view =inflater.inflate(R.layout.fragment_comic_info, container, false);
-        if(getArguments().getBoolean("collected")){
-            String condition = getArguments().getString("condition");
-            view = setScores(condition, view);
-        }
-        int comicId = getArguments().getInt("comicId");
-        contactApi(comicId+"");
-        return view;
-    }
-
     public void setView(ArrayList<comic> info) {
         comic information = info.get(0);
         String title= information.title.split(" \\(")[0];
         setTextView(R.id.title,title,getView());
         setTextView(R.id.year,information.year,getView());
-        setTextView(R.id.issue,information.issueNumber+"",getView());
+        setTextView(R.id.issue,stripIssueNumber(information),getView());
         setTextView(R.id.pageCount,information.pageCount+"",getView());
         setTextView(R.id.series,information.series,getView());
         setTextView(R.id.mainCharacter,information.mainCharacter,getView());
         setTextView(R.id.description,information.description,getView());
-        setImageView(R.id.cover,information.ThumbLink+"."+information.ThumbExt
+        setImageView(R.id.cover,information.thumbLink+"."+information.thumbExt
                 ,getView(),getContext());
     }
 
+    public String stripIssueNumber(comic information) {
+        Double issue = information.issueNumber;
+        String result = issue.toString().split("\\.")[0];
+        return result;
+    }
 
 
     public View setScores(String condition, View view) {
@@ -260,4 +271,5 @@ public class comicInfo extends Fragment {
         super.onCreate(savedInstanceState);
         mainActivity.backAdministration(false,getContext());
     }
+
 }

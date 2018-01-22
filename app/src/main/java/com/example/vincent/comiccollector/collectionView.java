@@ -41,12 +41,12 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class collectionView extends Fragment {
-    GridView collectionGrid;
     mainActivity mainActivity;
     ArrayList<ownedComic> collection = new ArrayList<ownedComic>();
 
@@ -56,8 +56,7 @@ public class collectionView extends Fragment {
 
 
 
-    private void openInfo(int comicId,String condition) {
-        mainActivity.backAdministration(false,getContext());
+    public void openInfo(int comicId,String condition) {
         FragmentManager fm = getFragmentManager();
         comicInfo fragment = new comicInfo().newInstance(true,comicId,condition);
         FragmentTransaction ft = fm.beginTransaction();
@@ -96,11 +95,12 @@ public class collectionView extends Fragment {
         return collectionList;
     }
 
-    private class  showInfo implements AdapterView.OnItemClickListener{
+    public class  showInfo implements AdapterView.OnItemClickListener{
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             int comicId = collection.get(i).comicId;
             String condition = collection.get(i).condition;
+            mainActivity.backAdministration(false,getContext());
             openInfo(comicId,condition);
 
 
