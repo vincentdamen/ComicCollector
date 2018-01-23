@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,6 +72,7 @@ public class comicInfo extends Fragment {
         View view =inflater.inflate(R.layout.fragment_comic_info, container, false);
         edit = view.findViewById(R.id.edit);
         edit.setOnClickListener(new addComic());
+
         if(getArguments().getBoolean("collected")){
             edit.setOnClickListener(new editComic());
             edit.setImageResource(R.drawable.ic_create_white_24dp);
@@ -222,6 +224,7 @@ public class comicInfo extends Fragment {
 
     public void setView(ArrayList<comic> info) {
         comic information = info.get(0);
+        setScrollableText(R.id.description);
         String title= information.title.split(" \\(")[0];
         setTextView(R.id.title,title,getView());
         setTextView(R.id.year,information.year,getView());
@@ -240,6 +243,11 @@ public class comicInfo extends Fragment {
         return result;
     }
 
+    public void setScrollableText(int id){
+        TextView textView = getView().findViewById(id);
+        textView.setMovementMethod(new ScrollingMovementMethod());
+
+    }
     public View setScores(String condition, View view) {
         ArrayList<Double> scores = stripScores(condition);
         scoreId = setScoreId();
@@ -253,6 +261,7 @@ public class comicInfo extends Fragment {
         TextView textView = view.findViewById(id);
         textView.setText(input);
     }
+
 
     public void setImageView(Integer id, String link, View view, Context context) {
         ImageView imageView = view.findViewById(id);
@@ -285,6 +294,8 @@ public class comicInfo extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         mainActivity.backAdministration(false,getContext());
     }
 
@@ -294,6 +305,7 @@ public class comicInfo extends Fragment {
             FragmentTransaction ft = getFragmentManager().beginTransaction();
             addComicDialog fragment3 = new addComicDialog().newInstance(comicId);
             fragment3.show(ft, "dialog");
+            getInfo(comicId+"");
         }
     }
 
@@ -303,5 +315,12 @@ public class comicInfo extends Fragment {
         public void onClick(View view) {
 
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getInfo(comicId+"");
+
     }
 }
