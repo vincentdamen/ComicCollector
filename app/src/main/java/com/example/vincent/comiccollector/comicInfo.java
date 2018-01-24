@@ -42,7 +42,7 @@ import java.util.Objects;
 
 public class comicInfo extends Fragment {
     mainActivity mainActivity;
-    ArrayList<Integer> scoreId= new ArrayList<Integer>();
+    static ArrayList<Integer> scoreId= new ArrayList<Integer>();
     static String apiLink = "http://gateway.marvel.com/v1/public/comics";
     static String limit = "?limit=50";
     static String privateKey =  "160ba682255404c4190a9076642cacae20f9f4cf";
@@ -81,7 +81,7 @@ public class comicInfo extends Fragment {
         if(getArguments().getBoolean("collected")){
             addOwned = view.findViewById(R.id.edit);
             addOwned.setOnClickListener(new addComic());
-            add.setOnClickListener(new editComic());
+            add.setOnClickListener(new editComics());
             add.setImageResource(R.drawable.ic_create_white_24dp);
             add.setOnLongClickListener(new showaddOwned());
             String condition = getArguments().getString("condition");
@@ -255,7 +255,7 @@ public class comicInfo extends Fragment {
         textView.setMovementMethod(new ScrollingMovementMethod());
 
     }
-    public View setScores(String condition, View view) {
+    public static View setScores(String condition, View view) {
         ArrayList<Double> scores = stripScores(condition);
         scoreId = setScoreId();
         for(int i=0; i<scores.size();i++){
@@ -279,7 +279,7 @@ public class comicInfo extends Fragment {
         Glide.with(context).load(link).into(imageView);
     }
 
-    public ArrayList<Double> stripScores(String condition) {
+    public static ArrayList<Double> stripScores(String condition) {
         ArrayList<Double> result = new ArrayList<Double>();
         String[] values = condition.split(",");
         for (String value : values) {
@@ -290,7 +290,7 @@ public class comicInfo extends Fragment {
         return result;
     }
 
-    public ArrayList<Integer> setScoreId(){
+    public static ArrayList<Integer> setScoreId(){
         scoreId.add(R.id.book1);
         scoreId.add(R.id.book2);
         scoreId.add(R.id.book3);
@@ -317,10 +317,14 @@ public class comicInfo extends Fragment {
         }
     }
 
-    private class editComic implements FloatingActionButton.OnClickListener {
+    private class editComics implements FloatingActionButton.OnClickListener {
 
         @Override
         public void onClick(View view) {
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            editComic fragment4 = new editComic().newInstance(comicId);
+            fragment4.show(ft, "dialog");
+            getInfo(comicId+"");
         }
     }
 

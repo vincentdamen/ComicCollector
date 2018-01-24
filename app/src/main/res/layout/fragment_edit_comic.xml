@@ -32,10 +32,10 @@
                     android:layout_marginEnd="16dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
-                    android:fontFamily="@font/raleway_thin"
+                    android:fontFamily="@font/raleway"
                     android:textAlignment="center"
                     android:textColor="@color/common_google_signin_btn_text_dark_default"
-                    android:textSize="14sp"
+                    android:textSize="18sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -95,6 +95,7 @@
                                 style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
                                 android:layout_width="wrap_content"
                                 android:layout_height="36dp"
+                                android:layout_marginBottom="8dp"
                                 android:layout_marginEnd="8dp"
                                 android:layout_marginTop="8dp"
                                 android:fontFamily="@font/raleway"
@@ -102,6 +103,7 @@
                                 android:textAllCaps="false"
                                 android:textColor="@color/colorPrimary"
                                 android:textStyle="bold"
+                                app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toStartOf="@+id/addButton"
                                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -110,6 +112,7 @@
                                 style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
                                 android:layout_width="wrap_content"
                                 android:layout_height="36dp"
+                                android:layout_marginBottom="8dp"
                                 android:layout_marginEnd="8dp"
                                 android:layout_marginTop="8dp"
                                 android:fontFamily="@font/raleway"
@@ -118,6 +121,7 @@
                                 android:textAllCaps="false"
                                 android:textColor="@color/colorPrimary"
                                 android:textStyle="bold"
+                                app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
                         </android.support.constraint.ConstraintLayout>

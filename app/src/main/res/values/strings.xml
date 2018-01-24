@@ -38,5 +38,6 @@
     <string name="fix_summary">Is not available. I think it is an awesome comic!</string>
     <string name="discard">Discard</string>
     <string name="confirm">Confirm</string>
+    <string name="logout">Logout</string>
 
 </resources>

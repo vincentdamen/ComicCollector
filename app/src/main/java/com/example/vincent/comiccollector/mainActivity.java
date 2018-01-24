@@ -1,6 +1,8 @@
 package com.example.vincent.comiccollector;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.GridView;
@@ -59,9 +62,9 @@ public class mainActivity extends AppCompatActivity {
                 case R.id.navigation_search:
                     return true;
                 case R.id.navigation_settings:
-                    FirebaseAuth.getInstance().signOut();
+                    signOut();
                     onStart();
-                    return true;
+                    return false;
             }
             return false;
         }};
@@ -142,6 +145,27 @@ public class mainActivity extends AppCompatActivity {
         boolean state = sharedPref.getBoolean("home",true);
         return state;
     }
+
+    public void signOut() {
+        AlertDialog alertDialog = new AlertDialog.Builder(new ContextThemeWrapper(mainActivity.this,R.style.AlertDialogCustom)).create();
+        alertDialog.setMessage("Do you really want to leave collection  behind?");
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Stay",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Logout",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        FirebaseAuth.getInstance().signOut();
+                        onStart();
+                    }
+                });
+        alertDialog.show();
+    }
+
     @Override
     public void onBackPressed() {
         // Hier worden de benodigde variabelen benoemd
