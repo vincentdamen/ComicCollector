@@ -39,9 +39,7 @@ public class gridAdapter extends ArrayAdapter<ownedComic> {
     public View assignInfo(View view,int position) {
         String imageUrl = collection.get(position).thumbLink +
                  "."+collection.get(position).thumbExt;
-        ImageView imageView = view.findViewById(R.id.icon);
-        Log.d("imageLink",imageUrl);
-        Glide.with(context).load(imageUrl).into(imageView);
+        comicInfo.setImageView(R.id.icon,imageUrl,view,getContext());
         return view;
     }
 }

@@ -8,6 +8,7 @@
     <!-- TODO: Update blank fragment layout -->
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/headLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorPrimaryDark">
@@ -16,7 +17,8 @@
             android:id="@+id/topLayout"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             app:layout_constraintBottom_toTopOf="@+id/descriptionLayout"
             app:layout_constraintEnd_toEndOf="parent"
@@ -365,7 +367,8 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginBottom="16dp"
-            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -489,6 +492,7 @@
                         android:id="@+id/description"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
+                        android:layout_marginEnd="64dp"
                         android:layout_weight="3"
                         android:fontFamily="@font/raleway_thin"
                         android:gravity="center_horizontal|start"
@@ -508,10 +512,35 @@
 
         </android.support.constraint.ConstraintLayout>
 
+        <FrameLayout
+            android:id="@+id/frameFAB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="72dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/descriptionLayout"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|right"
+                android:clickable="true"
+                android:src="@drawable/ic_add_black_24dp"
+                android:tint="@color/common_google_signin_btn_text_dark_default"
+                android:visibility="gone"
+                app:backgroundTint="@color/colorPrimary"
+                app:fabSize="normal"
+                app:layout_constraintBottom_toTopOf="@+id/add"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </FrameLayout>
+
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/edit"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:id="@+id/add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:layout_marginEnd="16dp"
             android:clickable="true"
@@ -521,8 +550,7 @@
             app:backgroundTint="@color/colorPrimary"
             app:fabSize="normal"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-/>
+            app:layout_constraintEnd_toEndOf="parent" />
     </android.support.constraint.ConstraintLayout>
 
 </FrameLayout>

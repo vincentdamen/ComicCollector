@@ -3,6 +3,7 @@ package com.example.vincent.comiccollector;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -46,7 +50,8 @@ public class comicInfo extends Fragment {
     static String errorHandler = "Is not available. I think it is an awesome comic!";
     static String backUpLink = "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available/portrait_uncanny.jpg";
     static String deadLink = "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg";
-    FloatingActionButton edit;
+    FloatingActionButton add;
+    FloatingActionButton addOwned;
     int comicId;
 
 
@@ -70,13 +75,15 @@ public class comicInfo extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =inflater.inflate(R.layout.fragment_comic_info, container, false);
-        edit = view.findViewById(R.id.edit);
-        edit.setOnClickListener(new addComic());
+        add = view.findViewById(R.id.add);
+        add.setOnClickListener(new addComic());
 
         if(getArguments().getBoolean("collected")){
-            edit.setOnClickListener(new editComic());
-            edit.setImageResource(R.drawable.ic_create_white_24dp);
-
+            addOwned = view.findViewById(R.id.edit);
+            addOwned.setOnClickListener(new addComic());
+            add.setOnClickListener(new editComic());
+            add.setImageResource(R.drawable.ic_create_white_24dp);
+            add.setOnLongClickListener(new showaddOwned());
             String condition = getArguments().getString("condition");
             view = setScores(condition, view);
         }
@@ -263,9 +270,10 @@ public class comicInfo extends Fragment {
     }
 
 
-    public void setImageView(Integer id, String link, View view, Context context) {
+    public static void setImageView(Integer id, String link, View view, Context context) {
         ImageView imageView = view.findViewById(id);
-        if(link==deadLink){
+
+        if(Objects.equals(link, deadLink)){
             link = backUpLink;
         }
         Glide.with(context).load(link).into(imageView);
@@ -313,7 +321,6 @@ public class comicInfo extends Fragment {
 
         @Override
         public void onClick(View view) {
-
         }
     }
 
@@ -323,4 +330,39 @@ public class comicInfo extends Fragment {
         getInfo(comicId+"");
 
     }
+
+    private class showaddOwned implements View.OnLongClickListener {
+
+        @Override
+        public boolean onLongClick(View view) {
+            showAddButton();
+            setTimer();
+            return true;
+        }
+    }
+    public void showAddButton(){
+        Animation show_fab_1 = AnimationUtils.loadAnimation(getContext(), R.anim.show_fab_1);
+        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams)
+        addOwned.getLayoutParams();
+        addOwned.setVisibility(View.VISIBLE);
+        addOwned.setLayoutParams(layoutParams);
+        addOwned.startAnimation(show_fab_1);
+        addOwned.setClickable(true);}
+
+    public void setTimer(){
+    CountDownTimer timer = new CountDownTimer(4000, 100) {
+        @Override
+        public void onTick(long l) {
+
+        }
+        public void onFinish() {
+            Animation hide_fab_1 = AnimationUtils.loadAnimation(getContext(), R.anim.hide_fab_1);
+            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams)
+            addOwned.getLayoutParams();
+            addOwned.setLayoutParams(layoutParams);
+            addOwned.startAnimation(hide_fab_1);
+            addOwned.setClickable(false);
+        }};
+        timer.start();
+}
 }
