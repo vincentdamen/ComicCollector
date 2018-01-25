@@ -42,5 +42,6 @@
     <string name="warningDelete">Hold the button to delete the score</string>
     <string name="cancel">CANCEL</string>
     <string name="ok">OK</string>
+    <string name="saveWarning">if you are done, press OK to commit your changes</string>
 
 </resources>

@@ -41,10 +41,13 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
                         android:layout_marginTop="8dp"
+                        android:autoText="false"
                         android:fontFamily="@font/raleway"
+
+                        android:maxLines="1"
                         android:textAlignment="center"
                         android:textColor="@color/common_google_signin_btn_text_dark_default"
-                        android:textSize="18sp"
+                        android:textSize="16sp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -115,6 +118,7 @@
                                         android:id="@+id/mainCharacterTitle"
                                         android:layout_width="0dp"
                                         android:layout_height="0dp"
+
                                         android:fontFamily="@font/raleway"
                                         android:gravity="start"
                                         android:text="Main character:"
@@ -497,6 +501,7 @@
                         android:fontFamily="@font/raleway_thin"
                         android:gravity="center_horizontal|start"
                         android:maxLines="15"
+
                         android:scrollbars="vertical"
                         android:textColor="@color/common_google_signin_btn_text_dark_default"
                         android:textSize="14sp"

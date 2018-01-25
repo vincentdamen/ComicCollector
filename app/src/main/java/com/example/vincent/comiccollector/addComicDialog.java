@@ -1,22 +1,19 @@
 package com.example.vincent.comiccollector;
 
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridView;
 import android.support.v4.app.DialogFragment;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
-import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -48,6 +45,7 @@ public class addComicDialog extends DialogFragment {
     Button cancel;
     ArrayList<ownedComic> collection;
     collectionView collectionView;
+    String condition;
     int comicId;
 
     ArrayList<Integer> inputIds= new ArrayList<Integer>();
@@ -102,7 +100,7 @@ public class addComicDialog extends DialogFragment {
         getCollection();
         getDialog().setCanceledOnTouchOutside(false);
         slider = view.findViewById(R.id.amountBar);
-        add = view.findViewById(R.id.addButton);
+        add = view.findViewById(R.id.sendButton);
         cancel = view.findViewById(R.id.cancelButton);
         slider.setOnSeekBarChangeListener(new seekbarManager());
         add.setOnClickListener(new addToFireBase());
@@ -202,11 +200,12 @@ public class addComicDialog extends DialogFragment {
     }
     public void transpose(comic comic){
         Boolean newInCollection= true;
-        String condition = getCondition();
+        condition = getCondition();
         for(ownedComic owned:collection){
             if(owned.comicId==comic.id){
                 newInCollection=false;
                 owned.condition=owned.condition+","+condition;
+                condition= owned.condition;
             }
         }
         if(newInCollection){
@@ -218,12 +217,20 @@ public class addComicDialog extends DialogFragment {
         @Override
         public void onClick(View view) {
         transpose(newComic.get(0));
-        updateFireBase(collection);
-
+        updateFireBase(collection,getContext());
+        dismiss();
+        setCondition(getContext(),condition);
         }
     }
 
-    public void updateFireBase(final ArrayList<ownedComic> collection) {
+    public static void setCondition(Context context,String condition) {
+        SharedPreferences sharedPref1 = context.getSharedPreferences("newScores", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref1.edit();
+        editor.putString("newScores",condition);
+        editor.apply();
+    }
+
+    public static void updateFireBase(final ArrayList<ownedComic> collection, final Context context) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference nDatabase = database.getReference("Users");
         final FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -233,8 +240,7 @@ public class addComicDialog extends DialogFragment {
                     @Override
                     public void onDataChange(final DataSnapshot dataSnapshot) {
                         dataSnapshot.getRef().child("collection").setValue(collection);
-                        mainActivity.backAdministration(false,getContext());
-                        dismiss();
+                        mainActivity.backAdministration(false,context);
 
                     }
 

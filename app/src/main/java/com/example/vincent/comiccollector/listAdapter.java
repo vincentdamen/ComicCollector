@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,8 +61,10 @@ public class listAdapter extends ArrayAdapter {
         public boolean onLongClick(View view) {
             view=this.view;
             changeScore(position,false,view);
-            LinearLayout linearLayout = view.findViewById(R.id.complete) ;
-            linearLayout.setVisibility(View.GONE);
+            ConstraintLayout constraintLayout = view.findViewById(R.id.content);
+            constraintLayout.setVisibility(View.GONE);
+            TextView textView = view.findViewById(R.id.deletedInfo);
+            textView.setVisibility(View.VISIBLE);
             return true;
         }
     }
@@ -84,7 +87,7 @@ public class listAdapter extends ArrayAdapter {
     private class explainLongClick implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            notfiyUser(getContext().getString(R.string.warningDelete));
+            notfiyUser(getContext().getString(R.string.warningDelete),getContext());
         }
     }
     public void changeScore(int i,Boolean changing,View view){
@@ -98,13 +101,12 @@ public class listAdapter extends ArrayAdapter {
             editor.remove("score_" + i);
         }
         editor.apply();
-        notfiyUser("if you are done, press OK to commit your changes");
         Log.d("dd",sharedPref1.getAll().toString());
 
     }
-    public void notfiyUser(String text){
+    public static void notfiyUser(String text,Context context){
         int duration = Toast.LENGTH_SHORT;
-        Toast toast = Toast.makeText(getContext(), text, duration);
+        Toast toast = Toast.makeText(context, text, duration);
         toast.show();
     }
 }

@@ -55,6 +55,8 @@ public class comicInfo extends Fragment {
     FloatingActionButton add;
     FloatingActionButton addOwned;
     int comicId;
+    boolean owned;
+    String condition;
 
 
     public comicInfo newInstance( Boolean collected, int comicId,String condition ) {
@@ -79,15 +81,15 @@ public class comicInfo extends Fragment {
         View view =inflater.inflate(R.layout.fragment_comic_info, container, false);
         add = view.findViewById(R.id.add);
         add.setOnClickListener(new addComic());
-
-        if(getArguments().getBoolean("collected")){
+        owned = getArguments().getBoolean("collected");
+        if(owned){
             addOwned = view.findViewById(R.id.edit);
             addOwned.setOnClickListener(new addComic());
             add.setOnClickListener(new editComics());
             add.setImageResource(R.drawable.ic_create_white_24dp);
             add.setOnLongClickListener(new showaddOwned());
-            String condition = getArguments().getString("condition");
-            view = setScores(condition, view);
+            condition = getLatestCondition();
+
         }
         comicId = getArguments().getInt("comicId");
         getInfo(comicId+"");
@@ -244,6 +246,8 @@ public class comicInfo extends Fragment {
         setTextView(R.id.description,information.description,getView());
         setImageView(R.id.cover,information.thumbLink+"."+information.thumbExt
                 ,getView(),getContext());
+        if(owned){
+        setScores(getLatestCondition(), getView());}
     }
 
     public String stripIssueNumber(comic information) {
@@ -257,14 +261,14 @@ public class comicInfo extends Fragment {
         textView.setMovementMethod(new ScrollingMovementMethod());
 
     }
-    public static View setScores(String condition, View view) {
+
+    public static void setScores(String condition, View view) {
         ArrayList<Double> scores = stripScores(condition);
         scoreId = setScoreId();
         int size = Math.min(scoreId.size(),scores.size());
         for(int i=0; i<size;i++){
             setTextView(scoreId.get(i),scores.get(i).toString(),view);
         }
-        return view;
     }
 
     public static void setTextView(Integer id, String input,View view) {
@@ -308,6 +312,15 @@ public class comicInfo extends Fragment {
 
 
         mainActivity.backAdministration(false,getContext());
+    }
+
+    public String getLatestCondition() {
+        SharedPreferences sharedPref1 = getContext().getSharedPreferences("newScores", Context.MODE_PRIVATE);
+        String latestCondition = sharedPref1.getString("newScores","null");
+        if(latestCondition=="null"){
+            latestCondition=getArguments().getString("condition");
+        }
+        return latestCondition;
     }
 
 

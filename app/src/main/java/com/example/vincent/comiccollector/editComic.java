@@ -11,9 +11,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -32,17 +35,16 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import static com.example.vincent.comiccollector.collectionView.saveCollection;
-import static com.example.vincent.comiccollector.comicInfo.JSONify;
-import static com.example.vincent.comiccollector.comicInfo.createLink;
+
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class editComic extends DialogFragment {
-    public ArrayList<ownedComic> collection;
+    ArrayList<ownedComic> collection = new ArrayList<ownedComic>();
     int comicId;
+    String condition;
 
     public editComic newInstance(int comicId) {
         editComic f = new editComic();
@@ -65,6 +67,11 @@ public class editComic extends DialogFragment {
         View view = inflater.inflate(R.layout.fragment_edit_comic, container, false);
         comicId = getArguments().getInt("comicId");
         getScores(comicId + "");
+        Button send = view.findViewById(R.id.sendButton);
+        Button cancel = view.findViewById(R.id.cancelButton);
+        send.setOnClickListener(new sendToFirebase());
+        cancel.setOnClickListener(new cancelChanges());
+        listAdapter.notfiyUser(getString(R.string.saveWarning),getContext());
         return view;
     }
 
@@ -78,6 +85,7 @@ public class editComic extends DialogFragment {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         for (DataSnapshot comic : dataSnapshot.getChildren()) {
+                            collection.add(comic.getValue(ownedComic.class));
                             if (Objects.equals(comic.getValue(ownedComic.class).comicId + "", query)) {
                                 ownedComic comicBook = comic.getValue(ownedComic.class);
                                 ArrayList<Double> scores = comicInfo.stripScores(comicBook.condition);
@@ -87,8 +95,6 @@ public class editComic extends DialogFragment {
                                 comicInfo.setTextView(R.id.titleEdit, title, getView());
                                 ListView listView = getView().findViewById(R.id.listEdit);
                                 listView.setAdapter(adapter);
-
-
                             }
                         }
                     }
@@ -123,6 +129,8 @@ public class editComic extends DialogFragment {
         }
         return scores;
     }
+
+
     private DialogInterface.OnDismissListener onDismissListener;
     public void setOnDismissListener(DialogInterface.OnDismissListener onDismissListener) {
         this.onDismissListener = onDismissListener;
@@ -134,4 +142,49 @@ public class editComic extends DialogFragment {
             onDismissListener.onDismiss(dialog);
         }
     }
+
+    private class cancelChanges implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            removeScores();
+            dismiss();
+        }
+    }
+
+    public void removeScores() {
+        SharedPreferences sharedPref1 = getContext().getSharedPreferences("scores", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref1.edit();
+        editor.clear().apply();
+    }
+
+    private class sendToFirebase implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            applyChanges();
+            addComicDialog.updateFireBase(collection,getContext());
+            addComicDialog.setCondition(getContext(),condition);
+            dismiss();
+        }
+    }
+
+    public void applyChanges() {
+        ArrayList<Double> scores = getSharedPrefScores();
+        condition = Stringify(scores);
+
+        for (ownedComic owned:collection){
+            if(owned.comicId==comicId){
+                owned.condition=condition;
+            }
+        }
+    }
+
+    public String Stringify(ArrayList<Double> scores) {
+        String result = "";
+        for(Double score:scores){
+            result = result + score.toString() +",";
+        }
+        result= result.substring(0,result.lastIndexOf(","));
+        return result;
+    }
+
 }
