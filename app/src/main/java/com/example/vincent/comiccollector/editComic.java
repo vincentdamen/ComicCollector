@@ -1,6 +1,9 @@
 package com.example.vincent.comiccollector;
 
 
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v4.app.DialogFragment;
@@ -49,6 +52,7 @@ public class editComic extends DialogFragment {
         f.setArguments(args);
         return f;
     }
+
     public editComic() {
         // Required empty public constructor
     }
@@ -58,9 +62,9 @@ public class editComic extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =inflater.inflate(R.layout.fragment_edit_comic, container, false);
+        View view = inflater.inflate(R.layout.fragment_edit_comic, container, false);
         comicId = getArguments().getInt("comicId");
-        getScores(comicId+"");
+        getScores(comicId + "");
         return view;
     }
 
@@ -70,16 +74,17 @@ public class editComic extends DialogFragment {
         final FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser userId = mAuth.getCurrentUser();
         nDatabase.child(userId.getUid()).child("collection").addListenerForSingleValueEvent(
-            new ValueEventListener() {
+                new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        for( DataSnapshot comic: dataSnapshot.getChildren()) {
+                        for (DataSnapshot comic : dataSnapshot.getChildren()) {
                             if (Objects.equals(comic.getValue(ownedComic.class).comicId + "", query)) {
                                 ownedComic comicBook = comic.getValue(ownedComic.class);
                                 ArrayList<Double> scores = comicInfo.stripScores(comicBook.condition);
+                                configSharedPrefScores(scores);
                                 listAdapter adapter = new listAdapter(getContext(), scores, 1);
-                                String title = "Editing: "+comicBook.title;
-                                comicInfo.setTextView(R.id.titleEdit,title,getView());
+                                String title = "Editing: " + comicBook.title;
+                                comicInfo.setTextView(R.id.titleEdit, title, getView());
                                 ListView listView = getView().findViewById(R.id.listEdit);
                                 listView.setAdapter(adapter);
 
@@ -93,5 +98,40 @@ public class editComic extends DialogFragment {
 
                     }
                 });
+    }
+
+    public void configSharedPrefScores(ArrayList<Double> scores) {
+        SharedPreferences sharedPref1 = getContext().getSharedPreferences("scores", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref1.edit();
+        editor.putInt("size", scores.size());
+        for (int i = 0; i < scores.size(); i++) {
+            String score = scores.get(i).toString();
+            editor.putString("score_" + i, score);
+        }
+        editor.apply();
+    }
+
+    public ArrayList<Double> getSharedPrefScores() {
+        SharedPreferences sharedPref = getContext().getSharedPreferences("scores", Context.MODE_PRIVATE);
+        int size = sharedPref.getInt("size", 0);
+        ArrayList<Double> scores= new ArrayList<Double>();
+        for (int i = 0; i < size; i++) {
+            String retrieved= sharedPref.getString("score_"+i,"deleted");
+            if (retrieved!="deleted"){
+            Double score = Double.parseDouble(retrieved);
+            scores.add(score);}
+        }
+        return scores;
+    }
+    private DialogInterface.OnDismissListener onDismissListener;
+    public void setOnDismissListener(DialogInterface.OnDismissListener onDismissListener) {
+        this.onDismissListener = onDismissListener;
+    }
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if (onDismissListener != null) {
+            onDismissListener.onDismiss(dialog);
+        }
     }
 }

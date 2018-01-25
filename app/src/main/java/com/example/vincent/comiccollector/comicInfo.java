@@ -2,6 +2,8 @@ package com.example.vincent.comiccollector;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
@@ -258,7 +260,8 @@ public class comicInfo extends Fragment {
     public static View setScores(String condition, View view) {
         ArrayList<Double> scores = stripScores(condition);
         scoreId = setScoreId();
-        for(int i=0; i<scores.size();i++){
+        int size = Math.min(scoreId.size(),scores.size());
+        for(int i=0; i<size;i++){
             setTextView(scoreId.get(i),scores.get(i).toString(),view);
         }
         return view;
@@ -307,13 +310,19 @@ public class comicInfo extends Fragment {
         mainActivity.backAdministration(false,getContext());
     }
 
+
     private class addComic implements FloatingActionButton.OnClickListener {
         @Override
         public void onClick(View view) {
             FragmentTransaction ft = getFragmentManager().beginTransaction();
             addComicDialog fragment3 = new addComicDialog().newInstance(comicId);
             fragment3.show(ft, "dialog");
-            getInfo(comicId+"");
+            fragment3.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    getInfo(comicId+"");
+                }
+            });
         }
     }
 
@@ -324,7 +333,12 @@ public class comicInfo extends Fragment {
             FragmentTransaction ft = getFragmentManager().beginTransaction();
             editComic fragment4 = new editComic().newInstance(comicId);
             fragment4.show(ft, "dialog");
-            getInfo(comicId+"");
+            fragment4.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    getInfo(comicId+"");
+                }
+            });
         }
     }
 
@@ -332,8 +346,9 @@ public class comicInfo extends Fragment {
     public void onResume() {
         super.onResume();
         getInfo(comicId+"");
+        }
 
-    }
+
 
     private class showaddOwned implements View.OnLongClickListener {
 
@@ -369,4 +384,5 @@ public class comicInfo extends Fragment {
         }};
         timer.start();
 }
+
 }

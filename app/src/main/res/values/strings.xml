@@ -39,5 +39,8 @@
     <string name="discard">Discard</string>
     <string name="confirm">Confirm</string>
     <string name="logout">Logout</string>
+    <string name="warningDelete">Hold the button to delete the score</string>
+    <string name="cancel">CANCEL</string>
+    <string name="ok">OK</string>
 
 </resources>

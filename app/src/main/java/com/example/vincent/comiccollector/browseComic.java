@@ -134,7 +134,6 @@ public class browseComic extends Fragment {
         transposed = new ArrayList<ownedComic>();
         for(comic comic:input){
             ownedComic transformer = new ownedComic(comic.id,
-                    0,
                     "",
                     comic.thumbExt,
                     comic.thumbLink,

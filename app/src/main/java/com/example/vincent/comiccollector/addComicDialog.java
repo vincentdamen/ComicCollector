@@ -1,6 +1,7 @@
 package com.example.vincent.comiccollector;
 
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -13,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.support.v4.app.DialogFragment;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -198,16 +200,24 @@ public class addComicDialog extends DialogFragment {
         EditText editText = view.findViewById(id);
         return editText.getText().toString();
     }
-    public ownedComic transpose(comic comic){
+    public void transpose(comic comic){
+        Boolean newInCollection= true;
         String condition = getCondition();
-        int length = condition.split(",").length;
-        ownedComic transposed = new ownedComic(comic.id,length,condition,comic.thumbExt,comic.thumbLink,comic.title);
-        return transposed;
+        for(ownedComic owned:collection){
+            if(owned.comicId==comic.id){
+                newInCollection=false;
+                owned.condition=owned.condition+","+condition;
+            }
+        }
+        if(newInCollection){
+            ownedComic transposed = new ownedComic(comic.id,condition,comic.thumbExt,comic.thumbLink,comic.title);
+            collection.add(transposed);
+        }
     }
     private class addToFireBase implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-        collection.add(transpose(newComic.get(0)));
+        transpose(newComic.get(0));
         updateFireBase(collection);
 
         }
@@ -226,7 +236,7 @@ public class addComicDialog extends DialogFragment {
                         mainActivity.backAdministration(false,getContext());
                         dismiss();
 
-                        }
+                    }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
@@ -243,4 +253,18 @@ public class addComicDialog extends DialogFragment {
             dismiss();
         }
     }
+    private DialogInterface.OnDismissListener onDismissListener;
+
+    public void setOnDismissListener(DialogInterface.OnDismissListener onDismissListener) {
+        this.onDismissListener = onDismissListener;
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if (onDismissListener != null) {
+            onDismissListener.onDismiss(dialog);
+        }
+    }
 }
+

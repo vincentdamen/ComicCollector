@@ -2,14 +2,19 @@ package com.example.vincent.comiccollector;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -33,8 +38,9 @@ public class listAdapter extends ArrayAdapter {
         setEditText(scores.get(position),R.id.qualityScore,view);
         ImageButton save = view.findViewById(R.id.save);
         ImageButton delete = view.findViewById(R.id.delete);
-        delete.setOnClickListener(new deleteScore());
-        save.setOnClickListener(new saveScore());
+        delete.setOnClickListener(new explainLongClick());
+        delete.setOnLongClickListener(new deleteScore(position,view));
+        save.setOnClickListener(new saveScore(position,view));
         return view;
     }
 
@@ -43,17 +49,62 @@ public class listAdapter extends ArrayAdapter {
         editText.setText(input.toString());
     }
 
-    private class deleteScore implements View.OnClickListener {
+    private class deleteScore implements View.OnLongClickListener {
+        int position;
+        View view;
+        public deleteScore(int i,View view) {
+            this.position=i;
+            this.view = view;
+        }
         @Override
-        public void onClick(View view) {
-
+        public boolean onLongClick(View view) {
+            view=this.view;
+            changeScore(position,false,view);
+            LinearLayout linearLayout = view.findViewById(R.id.complete) ;
+            linearLayout.setVisibility(View.GONE);
+            return true;
         }
     }
 
     private class saveScore implements View.OnClickListener {
+        int position;
+        View view;
+        public saveScore(int i,View view) {
+            this.view=view;
+            this.position=i;
+        }
         @Override
         public void onClick(View view) {
+            view=this.view;
 
+            changeScore(position,true,view);
         }
+    }
+
+    private class explainLongClick implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            notfiyUser(getContext().getString(R.string.warningDelete));
+        }
+    }
+    public void changeScore(int i,Boolean changing,View view){
+        SharedPreferences sharedPref1 = getContext().getSharedPreferences("scores", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref1.edit();
+        if(changing){
+            String editText=addComicDialog.getEditText(R.id.qualityScore,view);
+            editor.putString("score_"+i,editText);
+        }
+        else {
+            editor.remove("score_" + i);
+        }
+        editor.apply();
+        notfiyUser("if you are done, press OK to commit your changes");
+        Log.d("dd",sharedPref1.getAll().toString());
+
+    }
+    public void notfiyUser(String text){
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(getContext(), text, duration);
+        toast.show();
     }
 }
