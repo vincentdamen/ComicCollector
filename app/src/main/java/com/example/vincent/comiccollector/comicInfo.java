@@ -309,16 +309,17 @@ public class comicInfo extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         mainActivity.backAdministration(false,getContext());
     }
 
     public String getLatestCondition() {
         SharedPreferences sharedPref1 = getContext().getSharedPreferences("newScores", Context.MODE_PRIVATE);
         String latestCondition = sharedPref1.getString("newScores","null");
+        SharedPreferences.Editor editor = sharedPref1.edit();
+        editor.clear().apply();
         if(latestCondition=="null"){
             latestCondition=getArguments().getString("condition");
+
         }
         return latestCondition;
     }
@@ -382,20 +383,20 @@ public class comicInfo extends Fragment {
         addOwned.setClickable(true);}
 
     public void setTimer(){
-    CountDownTimer timer = new CountDownTimer(4000, 100) {
-        @Override
-        public void onTick(long l) {
+        CountDownTimer timer = new CountDownTimer(4000, 100) {
+            @Override
+            public void onTick(long l) {
 
-        }
-        public void onFinish() {
-            Animation hide_fab_1 = AnimationUtils.loadAnimation(getContext(), R.anim.hide_fab_1);
-            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams)
-            addOwned.getLayoutParams();
-            addOwned.setLayoutParams(layoutParams);
-            addOwned.startAnimation(hide_fab_1);
-            addOwned.setClickable(false);
-        }};
+            }
+            public void onFinish() {
+                Animation hide_fab_1 = AnimationUtils.loadAnimation(getContext(), R.anim.hide_fab_1);
+                FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams)
+                        addOwned.getLayoutParams();
+                addOwned.setLayoutParams(layoutParams);
+                addOwned.startAnimation(hide_fab_1);
+                addOwned.setClickable(false);
+            }};
         timer.start();
-}
+    }
 
 }

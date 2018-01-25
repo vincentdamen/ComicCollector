@@ -16,9 +16,9 @@ public class user {
     public String age;
     public ArrayList<comic> collection;
 
-    public user(String Name, String Age, ArrayList<comic> collection){
-        this.name = Name;
-        this.age = Age;
+    public user(String name, String age, ArrayList<comic> collection){
+        this.name = name;
+        this.age = age;
         this.collection = collection;
     }
     public user(){};

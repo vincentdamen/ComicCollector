@@ -60,6 +60,7 @@ public class mainActivity extends AppCompatActivity {
                     openBrowse();
                     return true;
                 case R.id.navigation_search:
+                    openSearch();
                     return true;
                 case R.id.navigation_settings:
                     signOut();
@@ -93,6 +94,13 @@ public class mainActivity extends AppCompatActivity {
     public void openBrowse(){
         FragmentManager fm = getSupportFragmentManager();
         browseComic fragment1 = new browseComic();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.targetFrame, fragment1);
+        ft.commit();
+    }
+    public void openSearch(){
+        FragmentManager fm = getSupportFragmentManager();
+        searchUsers fragment1 = new searchUsers();
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.targetFrame, fragment1);
         ft.commit();
@@ -148,7 +156,7 @@ public class mainActivity extends AppCompatActivity {
 
     public void signOut() {
         AlertDialog alertDialog = new AlertDialog.Builder(new ContextThemeWrapper(mainActivity.this,R.style.AlertDialogCustom)).create();
-        alertDialog.setMessage("Do you really want to leave collection  behind?");
+        alertDialog.setMessage("Do you really want to leave your collection  behind?");
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Stay",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {

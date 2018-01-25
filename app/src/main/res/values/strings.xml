@@ -8,8 +8,6 @@
     <string name="apiLink">http://gateway.marvel.com/v1/public/comics/</string>
     <string name="privateKey">160ba682255404c4190a9076642cacae20f9f4cf</string>
     <string name="publicKey">25119df35812e08ad556e1341e548b06</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="comicbook">Comicbook</string>
     <string name="login">Login</string>

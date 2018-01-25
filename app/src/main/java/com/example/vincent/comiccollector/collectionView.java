@@ -3,6 +3,7 @@ package com.example.vincent.comiccollector;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import android.support.annotation.Nullable;
@@ -50,11 +51,11 @@ import java.util.Objects;
 public class collectionView extends Fragment {
     mainActivity mainActivity;
     ArrayList<ownedComic> collection = new ArrayList<ownedComic>();
-
+    String uid;
+    boolean otherUser=false;
     public collectionView() {
         // Required empty public constructor
     }
-
 
 
     public void openInfo(int comicId,String condition) {
@@ -67,18 +68,21 @@ public class collectionView extends Fragment {
     public void getCollection(){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference nDatabase = database.getReference("Users");
-        final FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseUser userId = mAuth.getCurrentUser();
-        nDatabase.child(userId.getUid()).child("collection").addListenerForSingleValueEvent(
+        uid=checkOtherUser();
+        Log.d("uid",uid);
+
+        nDatabase.child(uid).child("collection").addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
+                        Log.d("updated","true");
                         collection = saveCollection(dataSnapshot);
                         gridAdapter adapter = new gridAdapter(getContext(),collection,1);
                         GridView gridView = getView().findViewById(R.id.collectionGrid);
                         gridView.setAdapter(adapter);
                         gridView.setOnItemClickListener(new showInfo());
                         gridView.setOnItemLongClickListener(new checkTitle());
+
                     }
 
                     @Override
@@ -86,6 +90,25 @@ public class collectionView extends Fragment {
 
                     }
                 });
+    }
+
+    public String checkOtherUser() {
+        SharedPreferences sharedPref = getActivity().getSharedPreferences("showUser", Context.MODE_PRIVATE);
+        if(!Objects.equals(sharedPref.getString("uid", "null"), "null")) {
+            uid=sharedPref.getString("uid","null");
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.remove("uid");
+            editor.apply();
+            otherUser=true;
+            mainActivity.backAdministration(false,getContext());
+        }
+        else{
+            final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+            FirebaseUser userId = mAuth.getCurrentUser();
+            uid=userId.getUid();
+        }
+        return uid;
+
     }
 
     public static ArrayList<ownedComic> saveCollection(DataSnapshot dataSnapshot) {
@@ -139,8 +162,15 @@ public class collectionView extends Fragment {
 
     @Override
     public void onResume() {
-        getCollection();
-        mainActivity.backAdministration(true,getContext());
+        if(otherUser) {
+            mainActivity.backAdministration(false, getContext());
+
+
+        }
+        else{
+
+            getCollection();
+            mainActivity.backAdministration(true, getContext());}
         super.onResume();
     }
 }
