@@ -9,6 +9,20 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/reload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
+            android:clickable="true"
+            android:src="@drawable/ic_autorenew_black_24dp"
+            android:tint="@color/colorPrimary"
+            app:backgroundTint="@color/colorAccent"
+            app:fabSize="normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
         <GridView
             android:id="@+id/browseGrid"
             android:layout_width="fill_parent"
@@ -22,6 +36,7 @@
             tools:targetApi="o"
             android:scrollbars="none"
             >
+
 
         </GridView>
 

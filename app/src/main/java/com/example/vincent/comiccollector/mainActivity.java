@@ -146,7 +146,7 @@ public class mainActivity extends AppCompatActivity {
     }
     public static  void removeOffset(Context context){
         SharedPreferences sharedPref = context.getSharedPreferences("home",Context.MODE_PRIVATE);
-        sharedPref.edit().remove("offset").commit();
+        sharedPref.edit().remove("offset").apply();
     }
     public boolean checkBackAdministration(){
         SharedPreferences sharedPref = getApplication().getSharedPreferences("home",Context.MODE_PRIVATE);

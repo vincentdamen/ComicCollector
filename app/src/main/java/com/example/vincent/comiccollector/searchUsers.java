@@ -42,6 +42,7 @@ public class searchUsers extends Fragment {
     ArrayList<String> userName = new ArrayList<String>();
     ArrayList<String> uid = new ArrayList<String>();
     ListView list;
+    EditText searchBar;
     listAdapterSearch adapter;
     public searchUsers() {
         // Required empty public constructor
@@ -53,10 +54,11 @@ public class searchUsers extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_search_users, container, false);
-        EditText searchBar = view.findViewById(R.id.searchBar);
+        searchBar = view.findViewById(R.id.searchBar);
         getRecentUsers(view);
         if(uid.isEmpty()){
         getUsers(true);
+        Log.d("size",userName.size()+"");
         }
         searchBar.addTextChangedListener(new controlSearch());
 
@@ -72,6 +74,7 @@ public class searchUsers extends Fragment {
             editor.putString("uid",uid.get(i));
             editor.apply();
             openCollectionView();
+            searchBar.setText("");
         }
     }
 
@@ -91,15 +94,18 @@ public class searchUsers extends Fragment {
         list.setOnItemClickListener(new selectUser());
     }
     public void getRecentUsers(View view){
-        SharedPreferences sharedPref = getContext().getSharedPreferences("recentvisited", Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getContext().getSharedPreferences("recentVisited", Context.MODE_PRIVATE);
         int size = sharedPref.getInt("size", 0);
-        for (int i = 0; i < size; i++) {
+        userName.clear();
+        uid.clear();
+        for (int i = size+1; i >0 ; i--) {
             String name= sharedPref.getString("name_"+i,"deleted");
             String userId= sharedPref.getString("uid_"+i,"deleted");
-            if (!Objects.equals(userId, "deleted") || !Objects.equals(name, "deleted")){
+            if (!Objects.equals(name, "deleted")){
                 userName.add(name);
                 uid.add(userId);
             }
+
         }
 
         setList(view);
@@ -108,8 +114,9 @@ public class searchUsers extends Fragment {
         SharedPreferences sharedPref1 = getContext().getSharedPreferences("recentVisited", Context.MODE_PRIVATE);
         Boolean removeOld=false;
         int toRemove=0;
+        Log.d("size", userName.size()+"");
         int count = sharedPref1.getInt("size",0);
-        for(int i=0;i<count;i++){
+        for(int i=0;i<count+1;i++){
             if(Objects.equals(sharedPref1.getString("uid_" + i, "null"), uid.get(position))){
                 toRemove=i;
                 removeOld=true;
@@ -120,11 +127,11 @@ public class searchUsers extends Fragment {
             editor.remove("uid_"+toRemove);
             editor.remove("name_"+toRemove);
         }
-        editor.putInt("size",count+1);
-        editor.putString("name_" + count+1, userName.get(position));
-        editor.putString("uid_" + count+1, uid.get(position));
+        editor.putInt("size",(count+1));
+        editor.putString("name_" + (count+1), userName.get(position));
+        editor.putString("uid_" + (count+1), uid.get(position));
+
         editor.apply();
-        Log.d("",sharedPref1.getInt("size",2)+"");
 
     }
 
@@ -141,10 +148,10 @@ public class searchUsers extends Fragment {
             if (editable.length()==0){
                 Log.d("test","true");
                 getRecentUsers(getView());
-                setList(getView());
             }else {
             getUsers(false);
             search(editable.toString());}
+
         }
     }
 
@@ -190,6 +197,7 @@ public class searchUsers extends Fragment {
                             userName.add(snapshot.child("name").getValue().toString());
                             if(onCreate){
                                 setList(getView());
+                                Log.d("size",userName.size()+"" );
                             }
                         }
 

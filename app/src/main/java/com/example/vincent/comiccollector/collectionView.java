@@ -75,7 +75,7 @@ public class collectionView extends Fragment {
     }
 
     public String getScore(int comicId) {
-        SharedPreferences sharedPref = getActivity().getSharedPreferences("ownCollection", Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getContext().getSharedPreferences("ownCollection", Context.MODE_PRIVATE);
         return sharedPref.getString("comicId_"+comicId,"null");
     }
 
@@ -110,7 +110,7 @@ public class collectionView extends Fragment {
     }
 
     public void storeScores() {
-        SharedPreferences sharedPref = getActivity().getSharedPreferences("ownCollection", Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getContext().getSharedPreferences("ownCollection", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         for(ownedComic comic:collection){
             editor.putString("comicId_"+comic.comicId,comic.condition);
@@ -119,7 +119,7 @@ public class collectionView extends Fragment {
     }
 
     public String checkOtherUser() {
-        SharedPreferences sharedPref = getActivity().getSharedPreferences("showUser", Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getContext().getSharedPreferences("showUser", Context.MODE_PRIVATE);
         if(!Objects.equals(sharedPref.getString("uid", "null"), "null")) {
             uid=sharedPref.getString("uid","null");
             SharedPreferences.Editor editor = sharedPref.edit();

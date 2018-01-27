@@ -241,9 +241,7 @@ public class addComicDialog extends DialogFragment {
                     public void onDataChange(final DataSnapshot dataSnapshot) {
                         dataSnapshot.getRef().child("collection").setValue(collection);
                         mainActivity.backAdministration(false,context);
-
                     }
-
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
 

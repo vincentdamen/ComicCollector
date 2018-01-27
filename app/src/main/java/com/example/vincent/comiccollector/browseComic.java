@@ -2,6 +2,7 @@ package com.example.vincent.comiccollector;
 
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -155,7 +156,10 @@ public class browseComic extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_browse_comic, container, false);
+        View view =inflater.inflate(R.layout.fragment_browse_comic, container, false);
+        FloatingActionButton reload  =view.findViewById(R.id.reload);
+        reload.setOnClickListener(new reloadGrid());
+        return view;
     }
 
     @Override
@@ -179,4 +183,12 @@ public class browseComic extends Fragment {
     }
 
 
+    private class reloadGrid implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            offset=randomOffset();
+            getComics(offset);
+            mainActivity.saveOffset(offset,getContext());
+        }
+    }
 }
