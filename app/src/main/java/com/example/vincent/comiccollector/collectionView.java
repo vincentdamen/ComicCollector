@@ -60,11 +60,25 @@ public class collectionView extends Fragment {
 
     public void openInfo(int comicId,String condition) {
         FragmentManager fm = getFragmentManager();
-        comicInfo fragment = new comicInfo().newInstance(true,comicId,condition);
+        comicInfo fragment = new comicInfo();
+        if (!otherUser){
+            fragment = new comicInfo().newInstance(true,comicId,condition);}
+        else{
+            String ownCondition = getScore(comicId);
+            Boolean ownedByUser = !Objects.equals(ownCondition,"null" );
+            Log.d("check owend",ownedByUser.toString());
+            fragment = new comicInfo().newInstance(ownedByUser,comicId,ownCondition);}
+
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.targetFrame, fragment);
         ft.addToBackStack(null).commit();
     }
+
+    public String getScore(int comicId) {
+        SharedPreferences sharedPref = getActivity().getSharedPreferences("ownCollection", Context.MODE_PRIVATE);
+        return sharedPref.getString("comicId_"+comicId,"null");
+    }
+
     public void getCollection(){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference nDatabase = database.getReference("Users");
@@ -77,6 +91,9 @@ public class collectionView extends Fragment {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Log.d("updated","true");
                         collection = saveCollection(dataSnapshot);
+                        if(!otherUser) {
+                            storeScores();
+                        }
                         gridAdapter adapter = new gridAdapter(getContext(),collection,1);
                         GridView gridView = getView().findViewById(R.id.collectionGrid);
                         gridView.setAdapter(adapter);
@@ -90,6 +107,15 @@ public class collectionView extends Fragment {
 
                     }
                 });
+    }
+
+    public void storeScores() {
+        SharedPreferences sharedPref = getActivity().getSharedPreferences("ownCollection", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        for(ownedComic comic:collection){
+            editor.putString("comicId_"+comic.comicId,comic.condition);
+        }
+        editor.apply();
     }
 
     public String checkOtherUser() {
