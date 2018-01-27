@@ -35,7 +35,7 @@ public class listAdapterSearch extends ArrayAdapter {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(
                 Activity.LAYOUT_INFLATER_SERVICE);
         final View view = inflater.inflate(R.layout.row_layout_search,null);
-        comicInfo.setTextView(R.id.user,users.get(position),view);
+        tools.setTextView(R.id.user,users.get(position),view);
         return view;
     }
 

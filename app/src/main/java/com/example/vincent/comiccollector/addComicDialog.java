@@ -65,7 +65,7 @@ public class addComicDialog extends DialogFragment {
 
     public void getComic(final String query) {
         RequestQueue queue = Volley.newRequestQueue(getContext());
-        String link = comicInfo.createLink(query, 0);
+        String link = tools.createLink(query, 0);
         StringRequest stringRequest = new StringRequest(Request.Method.GET,
                 link,
                 new Response.Listener<String>() {

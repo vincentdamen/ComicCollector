@@ -66,7 +66,7 @@ public class searchUsers extends Fragment {
     private class selectUser implements android.widget.AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            addRecentVisited(userName,uid,i);
+            addRecentVisited(i);
             SharedPreferences sharedPref = getActivity().getSharedPreferences("showUser", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putString("uid",uid.get(i));
@@ -104,7 +104,7 @@ public class searchUsers extends Fragment {
 
         setList(view);
     }
-    public void addRecentVisited(ArrayList<String> users,ArrayList<String> uid,int position) {
+    public void addRecentVisited(int position) {
         SharedPreferences sharedPref1 = getContext().getSharedPreferences("recentVisited", Context.MODE_PRIVATE);
         Boolean removeOld=false;
         int toRemove=0;
@@ -121,7 +121,7 @@ public class searchUsers extends Fragment {
             editor.remove("name_"+toRemove);
         }
         editor.putInt("size",count+1);
-        editor.putString("name_" + count+1, users.get(position));
+        editor.putString("name_" + count+1, userName.get(position));
         editor.putString("uid_" + count+1, uid.get(position));
         editor.apply();
         Log.d("",sharedPref1.getInt("size",2)+"");

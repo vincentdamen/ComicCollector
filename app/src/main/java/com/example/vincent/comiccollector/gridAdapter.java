@@ -39,7 +39,7 @@ public class gridAdapter extends ArrayAdapter<ownedComic> {
     public View assignInfo(View view,int position) {
         String imageUrl = collection.get(position).thumbLink +
                 "."+collection.get(position).thumbExt;
-        comicInfo.setImageView(R.id.icon,imageUrl,view,getContext());
+        tools.setImageView(R.id.icon,imageUrl,view,getContext());
         return view;
     }
 }

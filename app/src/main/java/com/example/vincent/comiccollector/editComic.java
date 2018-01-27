@@ -92,7 +92,7 @@ public class editComic extends DialogFragment {
                                 configSharedPrefScores(scores);
                                 listAdapter adapter = new listAdapter(getContext(), scores, 1);
                                 String title = "Editing: " + comicBook.title;
-                                comicInfo.setTextView(R.id.titleEdit, title, getView());
+                                tools.setTextView(R.id.titleEdit, title, getView());
                                 ListView listView = getView().findViewById(R.id.listEdit);
                                 listView.setAdapter(adapter);
                             }

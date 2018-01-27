@@ -58,7 +58,7 @@ public class browseComic extends Fragment {
 
     public void getComics(final String query){
         RequestQueue queue = Volley.newRequestQueue(getContext());
-        String link = comicInfo.createLink(query,1);
+        String link = tools.createLink(query,1);
         StringRequest stringRequest = new StringRequest(Request.Method.GET,
                 link,
                 new Response.Listener<String>() {

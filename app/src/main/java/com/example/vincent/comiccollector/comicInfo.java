@@ -45,13 +45,7 @@ import java.util.Objects;
 public class comicInfo extends Fragment {
     mainActivity mainActivity;
     static ArrayList<Integer> scoreId= new ArrayList<Integer>();
-    static String apiLink = "http://gateway.marvel.com/v1/public/comics";
-    static String limit = "?limit=50";
-    static String privateKey =  "160ba682255404c4190a9076642cacae20f9f4cf";
-    static String publicKey = "25119df35812e08ad556e1341e548b06";
     static String errorHandler = "Is not available. I think it is an awesome comic!";
-    static String backUpLink = "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available/portrait_uncanny.jpg";
-    static String deadLink = "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg";
     FloatingActionButton add;
     FloatingActionButton addOwned;
     int comicId;
@@ -96,48 +90,9 @@ public class comicInfo extends Fragment {
         return view;
     }
 
-    public static String createLink(String query,int type) {
-        // Creates the link to access the Marvel API
-        String link = placeQuery(query,type);
-        String timeStamp = System.currentTimeMillis() / 1000 + "";
-        String combination = timeStamp + privateKey + publicKey;
-        String hash = createHash(combination);
-        return combineLink(link, timeStamp, hash);
-    }
-
-    public static String placeQuery(String query, int type) {
-        // Specific comic
-        if(type==0){
-            return apiLink+"/"+ query+ limit;
-        }
-        // Offset
-        else if (type==1){
-            return apiLink+limit+"&offset="+query;
-        }
-        return apiLink+limit;
-    }
-
-    public static String combineLink(String link, String timeStamp, String hash) {
-        // Creates the full link
-        return link + "&ts=" + timeStamp + "&apikey=" + publicKey +
-                "&hash=" + hash;
-    }
-
-    public static String createHash(String combination) {
-        // Creates the hash code to validate the keys
-        try {
-            MessageDigest messageDigest = MessageDigest.getInstance("MD5");
-            messageDigest.update(combination.getBytes(), 0, combination.length());
-            return new BigInteger(1, messageDigest.digest()).toString(16);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return "Something went wrong";
-    }
-
     public void getInfo(final String query) {
         RequestQueue queue = Volley.newRequestQueue(getContext());
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, createLink(query,0),
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, tools.createLink(query,0),
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -237,14 +192,14 @@ public class comicInfo extends Fragment {
         comic information = info.get(0);
         setScrollableText(R.id.description);
         String title= information.title.split(" \\(")[0];
-        setTextView(R.id.title,title,getView());
-        setTextView(R.id.year,information.year,getView());
-        setTextView(R.id.issue,stripIssueNumber(information),getView());
-        setTextView(R.id.pageCount,information.pageCount+"",getView());
-        setTextView(R.id.series,information.series,getView());
-        setTextView(R.id.mainCharacter,information.mainCharacter,getView());
-        setTextView(R.id.description,information.description,getView());
-        setImageView(R.id.cover,information.thumbLink+"."+information.thumbExt
+        tools.setTextView(R.id.title,title,getView());
+        tools.setTextView(R.id.year,information.year,getView());
+        tools.setTextView(R.id.issue,stripIssueNumber(information),getView());
+        tools.setTextView(R.id.pageCount,information.pageCount+"",getView());
+        tools.setTextView(R.id.series,information.series,getView());
+        tools.setTextView(R.id.mainCharacter,information.mainCharacter,getView());
+        tools.setTextView(R.id.description,information.description,getView());
+        tools.setImageView(R.id.cover,information.thumbLink+"."+information.thumbExt
                 ,getView(),getContext());
         if(owned){
         setScores(getLatestCondition(), getView());}
@@ -267,24 +222,10 @@ public class comicInfo extends Fragment {
         scoreId = setScoreId();
         int size = Math.min(scoreId.size(),scores.size());
         for(int i=0; i<size;i++){
-            setTextView(scoreId.get(i),scores.get(i).toString(),view);
+            tools.setTextView(scoreId.get(i),scores.get(i).toString(),view);
         }
     }
 
-    public static void setTextView(Integer id, String input,View view) {
-        TextView textView = view.findViewById(id);
-        textView.setText(input);
-    }
-
-
-    public static void setImageView(Integer id, String link, View view, Context context) {
-        ImageView imageView = view.findViewById(id);
-
-        if(Objects.equals(link, deadLink)){
-            link = backUpLink;
-        }
-        Glide.with(context).load(link).into(imageView);
-    }
 
     public static ArrayList<Double> stripScores(String condition) {
         ArrayList<Double> result = new ArrayList<Double>();
