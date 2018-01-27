@@ -86,7 +86,7 @@ public class addComicDialog extends DialogFragment {
 
     public void createTitle(String s) {
         String title = "Add "+s+ " to your collection?";
-        comicInfo.setTextView(R.id.titleAdd,title,getView());
+        tools.setTextView(R.id.titleAdd,title,getView());
     }
 
     @Override
@@ -141,7 +141,7 @@ public class addComicDialog extends DialogFragment {
         public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
             amount=i;
             Log.d("tester",i+"");
-            comicInfo.setTextView(R.id.amount,i+ "",getView());
+            tools.setTextView(R.id.amount,i+ "",getView());
         }
         @Override
         public void onStartTrackingTouch(SeekBar seekBar) {
