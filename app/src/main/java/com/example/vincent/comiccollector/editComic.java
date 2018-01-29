@@ -164,26 +164,36 @@ public class editComic extends DialogFragment {
             addComicDialog.updateFireBase(collection,getContext());
             addComicDialog.setCondition(getContext(),condition);
             dismiss();
+
         }
     }
 
+
     public void applyChanges() {
+        ArrayList<ownedComic> toRemove= new ArrayList<ownedComic>();
         ArrayList<Double> scores = getSharedPrefScores();
         condition = Stringify(scores);
-
         for (ownedComic owned:collection){
             if(owned.comicId==comicId){
-                owned.condition=condition;
+                if(Objects.equals(condition, "")){
+                    toRemove.add(owned);
+                }
+                else {
+                    owned.condition = condition;
+                }
             }
         }
+        collection.removeAll(toRemove);
     }
 
     public String Stringify(ArrayList<Double> scores) {
         String result = "";
+        Log.d("scores",scores.size()+"");
+        if (scores.size()!=0){
         for(Double score:scores){
             result = result + score.toString() +",";
         }
-        result= result.substring(0,result.lastIndexOf(","));
+        result= result.substring(0,result.lastIndexOf(","));}
         return result;
     }
 

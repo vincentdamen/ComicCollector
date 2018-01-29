@@ -73,18 +73,8 @@ public class comicInfo extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =inflater.inflate(R.layout.fragment_comic_info, container, false);
-        add = view.findViewById(R.id.add);
-        add.setOnClickListener(new addComic());
-        owned = getArguments().getBoolean("collected");
-        if(owned){
-            addOwned = view.findViewById(R.id.edit);
-            addOwned.setOnClickListener(new addComic());
-            add.setOnClickListener(new editComics());
-            add.setImageResource(R.drawable.ic_create_white_24dp);
-            add.setOnLongClickListener(new showaddOwned());
-            condition = getLatestCondition();
 
-        }
+        owned = getArguments().getBoolean("collected");
         comicId = getArguments().getInt("comicId");
         getInfo(comicId+"");
         return view;
@@ -189,6 +179,7 @@ public class comicInfo extends Fragment {
     }
 
     public void setView(ArrayList<comic> info) {
+        owned=getOwned();
         comic information = info.get(0);
         setScrollableText(R.id.description);
         String title= information.title.split(" \\(")[0];
@@ -202,7 +193,27 @@ public class comicInfo extends Fragment {
         tools.setImageView(R.id.cover,information.thumbLink+"."+information.thumbExt
                 ,getView(),getContext());
         if(owned){
-        setScores(getLatestCondition(), getView());}
+            addOwned = getView().findViewById(R.id.edit);
+            addOwned.setOnClickListener(new addComic());
+            add.setOnClickListener(new editComics());
+            add.setImageResource(R.drawable.ic_create_white_24dp);
+            add.setOnLongClickListener(new showaddOwned());
+            condition = getLatestCondition();
+        setScores(condition, getView());}
+        else{
+            add = getView().findViewById(R.id.add);
+            add.setOnLongClickListener(null);
+            add.setImageResource(R.drawable.ic_add_black_24dp);
+            add.setOnClickListener(new addComic());
+            clearScores(getView());
+        }
+    }
+
+    public void clearScores(View view) {
+        scoreId = setScoreId();
+        for(int id:scoreId){
+            tools.setTextView(id,"",view);
+        }
     }
 
     public String stripIssueNumber(comic information) {
@@ -265,6 +276,15 @@ public class comicInfo extends Fragment {
         return latestCondition;
     }
 
+    public boolean getOwned() {
+        SharedPreferences sharedPref1 = getContext().getSharedPreferences("newScores", Context.MODE_PRIVATE);
+        owned=sharedPref1.getBoolean("status",owned);
+        SharedPreferences.Editor editor = sharedPref1.edit();
+        editor.remove("status");
+        editor.apply();
+        return owned;
+    }
+
 
     private class addComic implements FloatingActionButton.OnClickListener {
         @Override
@@ -300,6 +320,7 @@ public class comicInfo extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        owned=getOwned();
         getInfo(comicId+"");
         }
 

@@ -218,8 +218,8 @@ public class addComicDialog extends DialogFragment {
         public void onClick(View view) {
         transpose(newComic.get(0));
         updateFireBase(collection,getContext());
-        dismiss();
         setCondition(getContext(),condition);
+        dismiss();
         }
     }
 
@@ -227,6 +227,12 @@ public class addComicDialog extends DialogFragment {
         SharedPreferences sharedPref1 = context.getSharedPreferences("newScores", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref1.edit();
         editor.putString("newScores",condition);
+        if (Objects.equals(condition, "")){
+            editor.putBoolean("status",false);
+        }
+        else{
+            editor.putBoolean("status",true);
+        }
         editor.apply();
     }
 
