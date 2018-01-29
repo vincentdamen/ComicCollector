@@ -71,7 +71,7 @@ public class editComic extends DialogFragment {
         Button cancel = view.findViewById(R.id.cancelButton);
         send.setOnClickListener(new sendToFirebase());
         cancel.setOnClickListener(new cancelChanges());
-        listAdapter.notfiyUser(getString(R.string.saveWarning),getContext());
+        listAdapter.notifyUser(getString(R.string.saveWarning),getContext());
         return view;
     }
 
@@ -188,7 +188,7 @@ public class editComic extends DialogFragment {
 
     public String Stringify(ArrayList<Double> scores) {
         String result = "";
-        Log.d("scores",scores.size()+"");
+
         if (scores.size()!=0){
         for(Double score:scores){
             result = result + score.toString() +",";

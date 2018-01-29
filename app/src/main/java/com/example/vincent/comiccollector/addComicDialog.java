@@ -111,6 +111,8 @@ public class addComicDialog extends DialogFragment {
 
     public String getCondition() {
         String result = "";
+        inputIds.clear();
+        inputIds = getInputIds();
         for (int id : inputIds) {
             if (checkVisibility(id)) {
                 String input = getEditText(id, getView());
@@ -130,9 +132,6 @@ public class addComicDialog extends DialogFragment {
         if(editText.getVisibility()== getView().GONE){
             return false;
         }
-        else if (Objects.equals(editText.getText().toString(), "")){
-            return false;
-        }
         return true;
     }
 
@@ -140,8 +139,7 @@ public class addComicDialog extends DialogFragment {
         @Override
         public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
             amount=i;
-            Log.d("tester",i+"");
-            tools.setTextView(R.id.amount,i+ "",getView());
+            tools.setTextView(R.id.amount,(i+1)+ "",getView());
         }
         @Override
         public void onStartTrackingTouch(SeekBar seekBar) {
@@ -154,15 +152,16 @@ public class addComicDialog extends DialogFragment {
     }
 
     public void visbilityInput(ArrayList<Integer> inputIds,int i) {
-        for (int n =0;n<i;n++){
-            setVisibility(inputIds.get(n));
+        for(int id:inputIds){
+            if(i>-1){
+            setVisibility(id);
+            }
+            else{
+                EditText input = getView().findViewById(id);
+                input.setVisibility(View.GONE);
+            }
+            i=i-1;
         }
-        for(int n=4;n>i;n--) {
-            Log.d("dd",n+"");
-            EditText input = getView().findViewById(inputIds.get(n));
-            input.setVisibility(View.GONE);
-        }
-
     }
     public ArrayList<Integer> getInputIds(){
         inputIds.add(R.id.condition1);
@@ -216,12 +215,34 @@ public class addComicDialog extends DialogFragment {
     private class addToFireBase implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-        transpose(newComic.get(0));
-        updateFireBase(collection,getContext());
-        setCondition(getContext(),condition);
-        dismiss();
+            if(checkRequirements()){
+                transpose(newComic.get(0));
+                updateFireBase(collection,getContext());
+                setCondition(getContext(),condition);
+                dismiss();
+            }
         }
     }
+
+    public boolean checkRequirements() {
+        inputIds=getInputIds();
+        for (int id : inputIds) {
+            if (checkVisibility(id)) {
+                String input = getEditText(id, getView());
+                if (input.length() != 0) {
+                    Double score = Double.parseDouble(input);
+                    if (score > 10.0 || score <= 0.0) {
+                        listAdapter.notifyUser("Please fill in a value between 1-10", getContext());
+                        return false;
+                    }
+                }
+                else {
+                    listAdapter.notifyUser("Please fill in a value between 1-10", getContext());
+                    return false;
+                }
+            }
+        }
+        return true;}
 
     public static void setCondition(Context context,String condition) {
         SharedPreferences sharedPref1 = context.getSharedPreferences("newScores", Context.MODE_PRIVATE);

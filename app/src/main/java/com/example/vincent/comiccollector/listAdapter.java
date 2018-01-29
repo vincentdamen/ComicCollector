@@ -87,24 +87,35 @@ public class listAdapter extends ArrayAdapter {
     private class explainLongClick implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            notfiyUser(getContext().getString(R.string.warningDelete),getContext());
+            notifyUser(getContext().getString(R.string.warningDelete),getContext());
         }
     }
     public void changeScore(int i,Boolean changing,View view){
+        Boolean failed=true;
         SharedPreferences sharedPref1 = getContext().getSharedPreferences("scores", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref1.edit();
-        if(changing){
-            String editText=addComicDialog.getEditText(R.id.qualityScore,view);
-            editor.putString("score_"+i,editText);
+        if(changing) {
+            String editText = addComicDialog.getEditText(R.id.qualityScore, view);
+            if (editText.length() != 0) {
+                Double score = Double.parseDouble(editText);
+                if (score <= 10.0 && score > 0.0) {
+                    failed = false;
+                    editor.putString("score_" + i, editText);
+                    scores.set(i,score);
+                }
+            }
+            if (failed) {
+                notifyUser("Please fill in a value between 1-10", getContext());
+            }
         }
         else {
             editor.remove("score_" + i);
         }
         editor.apply();
-        Log.d("dd",sharedPref1.getAll().toString());
 
     }
-    public static void notfiyUser(String text,Context context){
+
+    public static void notifyUser(String text,Context context){
         int duration = Toast.LENGTH_SHORT;
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();

@@ -84,6 +84,7 @@ public class mainActivity extends AppCompatActivity {
 
 
     public void openCollection(){
+
         FragmentManager fm = getSupportFragmentManager();
         collectionView fragment = new collectionView();
         FragmentTransaction ft = fm.beginTransaction();

@@ -73,7 +73,7 @@ public class comicInfo extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =inflater.inflate(R.layout.fragment_comic_info, container, false);
-
+        add = view.findViewById(R.id.add);
         owned = getArguments().getBoolean("collected");
         comicId = getArguments().getInt("comicId");
         getInfo(comicId+"");
@@ -193,15 +193,14 @@ public class comicInfo extends Fragment {
         tools.setImageView(R.id.cover,information.thumbLink+"."+information.thumbExt
                 ,getView(),getContext());
         if(owned){
+            condition = getLatestCondition();
             addOwned = getView().findViewById(R.id.edit);
             addOwned.setOnClickListener(new addComic());
             add.setOnClickListener(new editComics());
             add.setImageResource(R.drawable.ic_create_white_24dp);
             add.setOnLongClickListener(new showaddOwned());
-            condition = getLatestCondition();
         setScores(condition, getView());}
         else{
-            add = getView().findViewById(R.id.add);
             add.setOnLongClickListener(null);
             add.setImageResource(R.drawable.ic_add_black_24dp);
             add.setOnClickListener(new addComic());
@@ -250,6 +249,7 @@ public class comicInfo extends Fragment {
     }
 
     public static ArrayList<Integer> setScoreId(){
+        scoreId.clear();
         scoreId.add(R.id.book1);
         scoreId.add(R.id.book2);
         scoreId.add(R.id.book3);
@@ -319,10 +319,10 @@ public class comicInfo extends Fragment {
 
     @Override
     public void onResume() {
-        super.onResume();
         owned=getOwned();
         getInfo(comicId+"");
-        }
+        super.onResume();
+    }
 
 
 
