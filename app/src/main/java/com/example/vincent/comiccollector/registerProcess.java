@@ -26,7 +26,7 @@ import static android.content.ContentValues.TAG;
 
 public class registerProcess extends DialogFragment implements View.OnClickListener{
     // Hier wordt de email en het password gecheckt op de requirements
-    public boolean CheckInfo (CharSequence target,CharSequence password) {
+    public boolean checkInfo (CharSequence target,CharSequence password) {
         return !(target == null || password == null) && password.length() > 6 &&
                 android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
     }
@@ -48,7 +48,9 @@ public class registerProcess extends DialogFragment implements View.OnClickListe
     }
     @Override
     public void onClick(View view) {
-        // Dit regelt de onclick van de aanmeldknop
+        if(mainActivity.checkInternet(getContext())) {
+
+            // Dit regelt de onclick van de aanmeldknop
         switch (view.getId()){
             case(R.id.registerButton):
                 // Hier worden de benodigde variabelen opgehaald
@@ -66,7 +68,7 @@ public class registerProcess extends DialogFragment implements View.OnClickListe
                         Objects.equals(passwords, controls)){
 
                     // Hier wordt gekeken of ze aan de voorwaarden voldoen
-                    if (CheckInfo(email,passwords)) {
+                    if (checkInfo(email,passwords)) {
 
                         // Hier wordt het account gecreeerd
                         createAccount(email,passwords);
@@ -87,6 +89,7 @@ public class registerProcess extends DialogFragment implements View.OnClickListe
                     errorBlock.setTextColor(getResources().getColor(R.color.error));
                 }
                 break;
+            }
         }
     }
 
@@ -100,7 +103,7 @@ public class registerProcess extends DialogFragment implements View.OnClickListe
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             checkLogin(email,Passwords);
-                            StartPersonalize();
+                            startPersonalize();
                             // Sign in success, update UI with the signed-in user's information
 
 
@@ -136,7 +139,7 @@ public class registerProcess extends DialogFragment implements View.OnClickListe
                 });
     }
     // Dit start de personalisatie van de user
-    public void StartPersonalize(){
+    public void startPersonalize(){
         getDialog().dismiss();
         FragmentManager fm = getFragmentManager();
         userInfo fragment = new userInfo();

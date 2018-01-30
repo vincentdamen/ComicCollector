@@ -49,8 +49,9 @@ public class userInfo extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
+        if(mainActivity.checkInternet(getContext())) {
 
-        // Hier worden de benodigde variabelen opgehaald
+            // Hier worden de benodigde variabelen opgehaald
         EditText Name = getView().findViewById(R.id.username);
         EditText Age = getView().findViewById(R.id.age);
 
@@ -66,6 +67,7 @@ public class userInfo extends Fragment implements View.OnClickListener {
             startActivity(goToNextActivity);
             getActivity().finish();
         }
+    }
     }
 
     // Hier wordt de userinfo opgeslagen

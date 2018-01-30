@@ -289,15 +289,18 @@ public class comicInfo extends Fragment {
     private class addComic implements FloatingActionButton.OnClickListener {
         @Override
         public void onClick(View view) {
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
-            addComicDialog fragment3 = new addComicDialog().newInstance(comicId);
-            fragment3.show(ft, "dialog");
-            fragment3.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    getInfo(comicId+"");
-                }
-            });
+            if (mainActivity.checkInternet(getContext())) {
+
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                addComicDialog fragment3 = new addComicDialog().newInstance(comicId);
+                fragment3.show(ft, "dialog");
+                fragment3.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        getInfo(comicId + "");
+                    }
+                });
+            }
         }
     }
 
@@ -305,7 +308,9 @@ public class comicInfo extends Fragment {
 
         @Override
         public void onClick(View view) {
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            if(mainActivity.checkInternet(getContext())) {
+
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
             editComic fragment4 = new editComic().newInstance(comicId);
             fragment4.show(ft, "dialog");
             fragment4.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -315,13 +320,16 @@ public class comicInfo extends Fragment {
                 }
             });
         }
+        }
     }
 
     @Override
     public void onResume() {
-        owned=getOwned();
-        getInfo(comicId+"");
-        super.onResume();
+        if(mainActivity.checkInternet(getContext())) {
+            owned = getOwned();
+            getInfo(comicId + "");
+            super.onResume();
+        }
     }
 
 

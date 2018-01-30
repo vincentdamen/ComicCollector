@@ -59,19 +59,23 @@ public class collectionView extends Fragment {
 
 
     public void openInfo(int comicId,String condition) {
-        FragmentManager fm = getFragmentManager();
-        comicInfo fragment = new comicInfo();
-        if (!otherUser){
-            fragment = new comicInfo().newInstance(true,comicId,condition);}
-        else{
-            String ownCondition = getScore(comicId);
-            Boolean ownedByUser = !Objects.equals(ownCondition,"null" );
-            Log.d("check owend",ownedByUser.toString());
-            fragment = new comicInfo().newInstance(ownedByUser,comicId,ownCondition);}
+        if(mainActivity.checkInternet(getContext())) {
 
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.targetFrame, fragment);
-        ft.addToBackStack(null).commit();
+            FragmentManager fm = getFragmentManager();
+            comicInfo fragment = new comicInfo();
+            if (!otherUser) {
+                fragment = new comicInfo().newInstance(true, comicId, condition);
+            } else {
+                String ownCondition = getScore(comicId);
+                Boolean ownedByUser = !Objects.equals(ownCondition, "null");
+                Log.d("check owend", ownedByUser.toString());
+                fragment = new comicInfo().newInstance(ownedByUser, comicId, ownCondition);
+            }
+
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.targetFrame, fragment);
+            ft.addToBackStack(null).commit();
+        }
     }
 
     public String getScore(int comicId) {
@@ -188,15 +192,15 @@ public class collectionView extends Fragment {
 
     @Override
     public void onResume() {
-        if(otherUser) {
-            mainActivity.backAdministration(false, getContext());
+        if(mainActivity.checkInternet(getContext())) {
+            if (otherUser) {
+                mainActivity.backAdministration(false, getContext());
+            } else {
 
-
+                getCollection();
+                mainActivity.backAdministration(true, getContext());
+            }
+            super.onResume();
         }
-        else{
-
-            getCollection();
-            mainActivity.backAdministration(true, getContext());}
-        super.onResume();
     }
 }

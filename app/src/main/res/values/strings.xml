@@ -41,5 +41,7 @@
     <string name="cancel">CANCEL</string>
     <string name="ok">OK</string>
     <string name="saveWarning">if you are done, press OK to commit your changes</string>
+    <string name="noInternet">You don\'t have an internet connection</string>
+
 
 </resources>

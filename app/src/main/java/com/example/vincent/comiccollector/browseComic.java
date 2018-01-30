@@ -118,17 +118,21 @@ public class browseComic extends Fragment {
 
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            boolean owned =false;
-            for(ownedComic comic:collection){
-                if (comic.comicId==transposed.get(i).comicId){
-                    owned=true;
-                    openInfo(comic.comicId,comic.condition,owned);
+            if (mainActivity.checkInternet(getContext())) {
+
+                boolean owned = false;
+                for (ownedComic comic : collection) {
+                    if (comic.comicId == transposed.get(i).comicId) {
+                        owned = true;
+                        openInfo(comic.comicId, comic.condition, owned);
+                    }
+                }
+                if (!owned) {
+                    int comicId = transposed.get(i).comicId;
+                    String condition = transposed.get(i).condition;
+                    openInfo(comicId, condition, owned);
                 }
             }
-            if(!owned){
-            int comicId = transposed.get(i).comicId;
-            String condition = transposed.get(i).condition;
-            openInfo(comicId,condition,owned);}
         }
     }
     public ArrayList<ownedComic> prepareComic(ArrayList<comic> input) {
@@ -177,18 +181,20 @@ public class browseComic extends Fragment {
     }
     @Override
     public void onResume() {
-        getComics(offset);
-        mainActivity.backAdministration(true,getContext());
-        super.onResume();
+        if (mainActivity.checkInternet(getContext())) {
+            getComics(offset);
+            mainActivity.backAdministration(true, getContext());
+            super.onResume();
+        }
     }
-
 
     private class reloadGrid implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            offset=randomOffset();
-            getComics(offset);
-            mainActivity.saveOffset(offset,getContext());
+            if(mainActivity.checkInternet(getContext())) {
+                offset=randomOffset();
+                getComics(offset);
+                mainActivity.saveOffset(offset,getContext());}
         }
     }
 }

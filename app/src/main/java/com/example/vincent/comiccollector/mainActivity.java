@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -45,8 +47,6 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class mainActivity extends AppCompatActivity {
-    comicInfo comicInfo;
-    private TextView mTextMessage;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -54,14 +54,17 @@ public class mainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_collection:
-                    openCollection();
-                    return true;
+                    if(checkInternet(getApplicationContext())){
+                        openCollection();
+                        return true;}
                 case R.id.navigation_browse:
-                    openBrowse();
-                    return true;
+                    if(checkInternet(getApplicationContext())){
+                        openBrowse();
+                        return true;}
                 case R.id.navigation_search:
-                    openSearch();
-                    return true;
+                    if(checkInternet(getApplicationContext())){
+                        openSearch();
+                        return true;}
                 case R.id.navigation_settings:
                     signOut();
                     onStart();
@@ -84,7 +87,6 @@ public class mainActivity extends AppCompatActivity {
 
 
     public void openCollection(){
-
         FragmentManager fm = getSupportFragmentManager();
         collectionView fragment = new collectionView();
         FragmentTransaction ft = fm.beginTransaction();
@@ -111,6 +113,7 @@ public class mainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         if (checkLogin()) {
             setContentView(R.layout.activity_main);
+            checkInternet(getApplicationContext());
             openCollection();
             BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
             navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -173,6 +176,21 @@ public class mainActivity extends AppCompatActivity {
                     }
                 });
         alertDialog.show();
+    }
+    public static Boolean checkInternet(Context context) {
+
+        ConnectivityManager cm =
+                (ConnectivityManager) context.getSystemService(context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+        if(!isConnected){
+            Toast.makeText(context, R.string.noInternet,
+                    Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
     }
 
     @Override

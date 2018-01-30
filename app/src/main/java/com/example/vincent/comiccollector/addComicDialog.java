@@ -93,8 +93,8 @@ public class addComicDialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        inputIds=getInputIds();
-        View view =inflater.inflate(R.layout.fragment_add_comic_dialog, container, false);
+        View view = inflater.inflate(R.layout.fragment_add_comic_dialog, container, false);
+        inputIds = getInputIds();
         comicId = getArguments().getInt("comicId");
         getComic(comicId + "");
         getCollection();
@@ -105,7 +105,6 @@ public class addComicDialog extends DialogFragment {
         slider.setOnSeekBarChangeListener(new seekbarManager());
         add.setOnClickListener(new addToFireBase());
         cancel.setOnClickListener(new leave());
-
         return view;
     }
 
