@@ -36,7 +36,7 @@ public class userInfo extends Fragment implements View.OnClickListener {
         return view;
     }
 
-    // kijkt of de user is ingelogd
+    // checks if user is logged in.
     @Override
     public void onStart() {
         super.onStart();
@@ -51,15 +51,15 @@ public class userInfo extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         if(mainActivity.checkInternet(getContext())) {
 
-            // Hier worden de benodigde variabelen opgehaald
+        // sets required variables.
         EditText Name = getView().findViewById(R.id.username);
         EditText Age = getView().findViewById(R.id.age);
 
-        // Hier wordt alle tekst opgehaald
+        // retrieves required information.
         String sName = Name.getText().toString();
         String sAge = Age.getText().toString();
 
-        // Hier wordt gekeken of de velden niet leeg zijn
+        // checks if input boxes aren't empty.
         if (!Objects.equals(sName, "") & !Objects.equals(sAge, "")
                 ){
             sendInfo(sName,sAge);
@@ -70,14 +70,14 @@ public class userInfo extends Fragment implements View.OnClickListener {
     }
     }
 
-    // Hier wordt de userinfo opgeslagen
+    // sends userInfo to Firebase.
     public void sendInfo(final String Name, final String Age){
-        // Hier worden de benodigde variabelen voorbereid
+        // sets required variables.
         final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         final FirebaseUser user = mAuth.getCurrentUser();
 
-        // Hier wordt firebase aangeroepen om informatie toe te schrijven
+        // calls firebase to store values.
         user userInfo = new user(Name,Age,new ArrayList<comic>());
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put("/Users/"+user.getUid(),userInfo);

@@ -21,9 +21,11 @@ import java.util.ArrayList;
 
 
 public class listAdapter extends ArrayAdapter {
-
+    // prepare some variables that are used in the whole class.
     private final ArrayList<Double> scores;
     private Context context;
+
+
     public listAdapter(@NonNull Context context, ArrayList<Double> scores, int resource) {
         super(context, resource, scores);
         this.context = context;
@@ -36,6 +38,8 @@ public class listAdapter extends ArrayAdapter {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(
                 Activity.LAYOUT_INFLATER_SERVICE);
         final View view = inflater.inflate(R.layout.row_layout,null);
+
+        // set the variables and listeners.
         setEditText(scores.get(position),R.id.qualityScore,view);
         ImageButton save = view.findViewById(R.id.save);
         ImageButton delete = view.findViewById(R.id.delete);
@@ -45,21 +49,26 @@ public class listAdapter extends ArrayAdapter {
         return view;
     }
 
+    // set a score in the edittext.
     public void setEditText(Double input,int id,View view){
         EditText editText = view.findViewById(id);
         editText.setText(input.toString());
     }
 
+    // the OnLongClickListener to delete the score.
     private class deleteScore implements View.OnLongClickListener {
         int position;
         View view;
+
         public deleteScore(int i,View view) {
             this.position=i;
             this.view = view;
         }
+
         @Override
         public boolean onLongClick(View view) {
             view=this.view;
+            // visualize that the score is deleted.
             changeScore(position,false,view);
             ConstraintLayout constraintLayout = view.findViewById(R.id.content);
             constraintLayout.setVisibility(View.GONE);
@@ -69,6 +78,7 @@ public class listAdapter extends ArrayAdapter {
         }
     }
 
+    // the OnLongClickListener to save the score.
     private class saveScore implements View.OnClickListener {
         int position;
         View view;
@@ -79,25 +89,33 @@ public class listAdapter extends ArrayAdapter {
         @Override
         public void onClick(View view) {
             view=this.view;
-
             changeScore(position,true,view);
         }
     }
 
+    // the OnClickListener to notify how to delete the score.
     private class explainLongClick implements View.OnClickListener {
         @Override
         public void onClick(View view) {
             notifyUser(getContext().getString(R.string.warningDelete),getContext());
         }
     }
+
+    // update or delete the score from the shared preference.
     public void changeScore(int i,Boolean changing,View view){
         Boolean failed=true;
+
+        // retrieve the old scores.
         SharedPreferences sharedPref1 = getContext().getSharedPreferences("scores", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref1.edit();
+
+        // checks what's needs to be done.
         if(changing) {
             String editText = addComicDialog.getEditText(R.id.qualityScore, view);
             if (editText.length() != 0) {
                 Double score = Double.parseDouble(editText);
+
+                // checks requirements
                 if (score <= 10.0 && score > 0.0) {
                     failed = false;
                     editor.putString("score_" + i, editText);
@@ -115,6 +133,7 @@ public class listAdapter extends ArrayAdapter {
 
     }
 
+    // show a toast to notify the user.
     public static void notifyUser(String text,Context context){
         int duration = Toast.LENGTH_SHORT;
         Toast toast = Toast.makeText(context, text, duration);

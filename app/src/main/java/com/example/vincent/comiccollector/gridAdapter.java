@@ -4,22 +4,18 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-
-import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
 
 public class gridAdapter extends ArrayAdapter<ownedComic> {
-
     private Context context;
     private ArrayList<ownedComic> collection;
+
     public gridAdapter(@NonNull Context context, ArrayList<ownedComic> collection, int resource) {
         super(context, resource, collection);
         this.context = context;
@@ -36,6 +32,7 @@ public class gridAdapter extends ArrayAdapter<ownedComic> {
 
     }
 
+    // assign the pictures to the imageView.
     public View assignInfo(View view,int position) {
         String imageUrl = collection.get(position).thumbLink +
                 "."+collection.get(position).thumbExt;

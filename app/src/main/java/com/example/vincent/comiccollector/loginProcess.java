@@ -21,8 +21,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class loginProcess extends DialogFragment implements View.OnClickListener{
 
-
-    // Checkt of de input in je mail edittext een mail adres en je lengte van je password
+    // checks if the input is correct.
     public boolean CheckInfo (CharSequence target,CharSequence password) {
         return !(target == null || password == null) && password.length() > 6 &&
                 android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
@@ -31,7 +30,6 @@ public class loginProcess extends DialogFragment implements View.OnClickListener
     public loginProcess() {
     }
 
-    // Dit maak de fragment view en  zorgt dat je niet weggaat als je buiten de dialog klikt
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -40,7 +38,7 @@ public class loginProcess extends DialogFragment implements View.OnClickListener
                 false);
         getDialog().setCanceledOnTouchOutside(false);
 
-        // Dit benoemd de Login knop en zet een OnClickListener
+        // sets variable and sets listener.
         Button login =  view.findViewById(R.id.buttonLogin);
         login.setOnClickListener(this);
         return view;
@@ -48,25 +46,25 @@ public class loginProcess extends DialogFragment implements View.OnClickListener
 
     @Override
     public void onClick(View view) {
-        // Checkt welke id het is
+        // checks the id.
         switch (view.getId()){
             case(R.id.buttonLogin):
 
-                // Hier worden de benodigde variabelen benoemd
+                // sets the required variables.
                 EditText mail =  (EditText) getDialog().findViewById(R.id.emailLogin);
                 EditText password =(EditText) getDialog().findViewById(R.id.passwordLogin);
 
-                // Hier wordt de input opgehaald
+                // retrieve the info from the input boxes.
                 String email = mail.getText().toString();
                 String passwords = password.getText().toString();
 
-                // Hier wordt gecheckt of de input niet leeg is
+                // checks if the boxes aren't empty.
                 if(email.length()>0 & passwords.length()>0){
                     if (CheckInfo(email,passwords)) {
                         checkLogin(email,passwords);
                     }
 
-                    // Hier worden errors aan de user gecommuniceerd
+                    // notify the errors to the user.
                     else{
                         TextView errorBlock = getDialog().findViewById(R.id.errorBlock);
                         errorBlock.setText(R.string.wrongInput);
@@ -81,16 +79,16 @@ public class loginProcess extends DialogFragment implements View.OnClickListener
         }
     }
 
-    // Hier wordt ingelogd
+    // login the user.
     public void checkLogin(String email, String Passwords){
-        // Hier wordt firebase opgehaald en gekeken of de inloggegevens kloppen
+        // sets the required variables and connects to firebase.
         final FirebaseAuth mAuth = FirebaseAuth.getInstance();
         mAuth.signInWithEmailAndPassword(email, Passwords)
                 .addOnCompleteListener( getActivity(), new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
-                        // als Login correct is
+                        // if login is succesful.
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             FirebaseUser user = mAuth.getCurrentUser();

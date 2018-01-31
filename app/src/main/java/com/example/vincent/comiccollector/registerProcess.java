@@ -25,7 +25,7 @@ import static android.content.ContentValues.TAG;
 
 
 public class registerProcess extends DialogFragment implements View.OnClickListener{
-    // Hier wordt de email en het password gecheckt op de requirements
+    // checks if the input is correct.
     public boolean checkInfo (CharSequence target,CharSequence password) {
         return !(target == null || password == null) && password.length() > 6 &&
                 android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
@@ -40,8 +40,8 @@ public class registerProcess extends DialogFragment implements View.OnClickListe
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_register_process, container, false);
-        // Dit voorkomt dat je weg kan klikken op het scherm
         getDialog().setCanceledOnTouchOutside(false);
+        // sets variable and sets listener.
         Button register =  view.findViewById(R.id.registerButton);
         register.setOnClickListener(this);
         return view;
@@ -50,51 +50,48 @@ public class registerProcess extends DialogFragment implements View.OnClickListe
     public void onClick(View view) {
         if(mainActivity.checkInternet(getContext())) {
 
-            // Dit regelt de onclick van de aanmeldknop
-        switch (view.getId()){
-            case(R.id.registerButton):
-                // Hier worden de benodigde variabelen opgehaald
-                EditText mail =  (EditText) getDialog().findViewById(R.id.emailRegister);
-                EditText password =(EditText) getDialog().findViewById(R.id.passwordRegister);
-                EditText control =(EditText) getDialog().findViewById(R.id.passwordControl);
+            // checks the id.
+            switch (view.getId()){
+                case(R.id.registerButton):
 
-                // Hier wordt alle tekst opgehaald
-                String controls = control.getText().toString();
-                String email = mail.getText().toString();
-                String passwords = password.getText().toString();
+                    // sets the required variables.
+                    EditText mail =  (EditText) getDialog().findViewById(R.id.emailRegister);
+                    EditText password =(EditText) getDialog().findViewById(R.id.passwordRegister);
+                    EditText control =(EditText) getDialog().findViewById(R.id.passwordControl);
 
-                // Hier wordt gekeken of de velden niet leeg zijn
-                if(email.length()>0 & passwords.length()>0 & control.length()>0 &
-                        Objects.equals(passwords, controls)){
+                    // retrieve the info from the input boxes.
+                    String controls = control.getText().toString();
+                    String email = mail.getText().toString();
+                    String passwords = password.getText().toString();
 
-                    // Hier wordt gekeken of ze aan de voorwaarden voldoen
-                    if (checkInfo(email,passwords)) {
+                    // checks if the boxes aren't empty.
+                    if(email.length()>0 & passwords.length()>0 & control.length()>0 &
+                            Objects.equals(passwords, controls)){
 
-                        // Hier wordt het account gecreeerd
-                        createAccount(email,passwords);
-                    }
+                        // checks if the input is okey.
+                        if (checkInfo(email,passwords)) {
 
-                    else{
-
-                        // Hier wordt errors verteld aan de user
+                            // creates the account.
+                            createAccount(email,passwords);
+                        }
+                        else{
+                            // notify the errors to the user.
+                            TextView errorBlock = getDialog().findViewById(R.id.errorR);
+                            errorBlock.setText(R.string.wrongInput);
+                            errorBlock.setTextColor(getResources().getColor(R.color.error));
+                        }
+                    }else{
+                        // notify the errors to the user.
                         TextView errorBlock = getDialog().findViewById(R.id.errorR);
-                        errorBlock.setText(R.string.wrongInput);
+                        errorBlock.setText(R.string.error_empty_fields);
                         errorBlock.setTextColor(getResources().getColor(R.color.error));
                     }
-                }else{
-
-                    // Hier wordt errors verteld aan de user
-                    TextView errorBlock = getDialog().findViewById(R.id.errorR);
-                    errorBlock.setText(R.string.error_empty_fields);
-                    errorBlock.setTextColor(getResources().getColor(R.color.error));
+                    break;
                 }
-                break;
-            }
         }
     }
 
-
-    // Hier wordt de user geregisteerd in firebase en wordt ingelogd
+    // the user is registered and logged in.
     public void createAccount(final String email, final String Passwords){
         final FirebaseAuth mAuth = FirebaseAuth.getInstance();
         mAuth.createUserWithEmailAndPassword(email, Passwords)
@@ -119,7 +116,7 @@ public class registerProcess extends DialogFragment implements View.OnClickListe
                 });
     }
 
-    // Hier wordt gebuiker ingelogd en doorgestuurd naar de extra info fragment
+    // user is logged in and will be send to extra info fragment.
     public void checkLogin(String email, String Passwords){
         final FirebaseAuth mAuth = FirebaseAuth.getInstance();
         mAuth.signInWithEmailAndPassword(email, Passwords)
@@ -138,7 +135,8 @@ public class registerProcess extends DialogFragment implements View.OnClickListe
                     }
                 });
     }
-    // Dit start de personalisatie van de user
+
+    // open extra info fragment.
     public void startPersonalize(){
         getDialog().dismiss();
         FragmentManager fm = getFragmentManager();

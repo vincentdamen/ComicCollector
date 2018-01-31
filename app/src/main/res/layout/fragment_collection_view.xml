@@ -6,8 +6,46 @@
     tools:context="com.example.vincent.comiccollector.collectionView">
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/loadingScreen"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <ProgressBar
+            android:id="@+id/loading"
+            style="@style/Widget.AppCompat.ProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:foregroundGravity="center"
+            android:theme="@style/progessAccent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="32dp"
+            android:fontFamily="@font/raleway"
+            android:text="@string/loading"
+            android:textColor="@color/colorPrimary"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/loading"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
 
         <GridView
             android:id="@+id/collectionGrid"
@@ -18,10 +56,9 @@
             android:listSelector="@android:color/transparent"
             android:numColumns="3"
             android:padding="16dp"
-            android:verticalSpacing="4dp"
-            tools:targetApi="o"
             android:scrollbars="none"
-            >
+            android:verticalSpacing="4dp"
+            tools:targetApi="o">
 
         </GridView>
 

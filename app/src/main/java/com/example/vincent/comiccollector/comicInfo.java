@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -27,22 +26,19 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.bumptech.glide.Glide;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Objects;
 
 
 public class comicInfo extends Fragment {
+    // prepare some variables that are used in the whole class.
     mainActivity mainActivity;
     static ArrayList<Integer> scoreId= new ArrayList<Integer>();
     static String errorHandler = "Is not available. I think it is an awesome comic!";
@@ -52,7 +48,7 @@ public class comicInfo extends Fragment {
     boolean owned;
     String condition;
 
-
+    // the method creates the possibility to open the fragment with an included variable.
     public comicInfo newInstance( Boolean collected, int comicId,String condition ) {
         comicInfo f = new comicInfo();
         Bundle args = new Bundle();
@@ -76,30 +72,47 @@ public class comicInfo extends Fragment {
         add = view.findViewById(R.id.add);
         owned = getArguments().getBoolean("collected");
         comicId = getArguments().getInt("comicId");
-        getInfo(comicId+"");
+        getInfo(comicId+"",view);
         return view;
     }
 
-    public void getInfo(final String query) {
+    // retrieves the comic from the Marvel API.
+    public void getInfo(final String query, final View view) {
+        // hide the navbar and show the loading screen.
+        tools.hideNavBar(getActivity());
+        tools.setLoadingScreen(R.id.loadingScreen,R.id.headLayout,view);
+
+        // start the Volley-request to contact the marvel API.
         RequestQueue queue = Volley.newRequestQueue(getContext());
         StringRequest stringRequest = new StringRequest(Request.Method.GET, tools.createLink(query,0),
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+
+                        // Strip the JSONarray.
                         ArrayList<comic> result = JSONify(response);
+
+                        // set the view.
                         setView(result);
+
+                        // shows the navbar and hides the loading screen.
+                        tools.showNavBar(getActivity());
+                        tools.removeLoadingscreen(R.id.loadingScreen,R.id.headLayout,view);
 
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("error",error.toString());
-                getInfo(query);
+
+                // retry if there is an error.
+                getInfo(query,view);
             }
         });
         queue.add(stringRequest);
     }
 
+    // strips the String to an Arraylist
     public static ArrayList<comic> JSONify(String response){
         ArrayList<comic> result = new ArrayList<comic>();
         JSONArray subArray = new JSONArray();
@@ -114,6 +127,7 @@ public class comicInfo extends Fragment {
         return result;
     }
 
+    // strips the result value into seperate comics.
     public static ArrayList<comic> stripComics(JSONArray comics){
         ArrayList<comic> result = new ArrayList<comic>();
         JSONObject extracted = new JSONObject();
@@ -129,6 +143,7 @@ public class comicInfo extends Fragment {
         return result;
     }
 
+    // save each comic into the class.
     public static comic storeComics(JSONObject extracted) {
         comic result = null;
         String mainCharacter = getMainCharacter(extracted);
@@ -153,6 +168,7 @@ public class comicInfo extends Fragment {
         return result;
     }
 
+    // extract the correct description.
     public static String getDescription(JSONObject extracted) {
         String result= null;
         try {
@@ -167,6 +183,7 @@ public class comicInfo extends Fragment {
         return result;
     }
 
+    // finds the main character from the comic.
     public static String getMainCharacter(JSONObject extracted) {
         String result;
         try {
@@ -178,6 +195,7 @@ public class comicInfo extends Fragment {
         return result;
     }
 
+    // places all the information into the view.
     public void setView(ArrayList<comic> info) {
         owned=getOwned();
         comic information = info.get(0);
@@ -192,14 +210,17 @@ public class comicInfo extends Fragment {
         tools.setTextView(R.id.description,information.description,getView());
         tools.setImageView(R.id.cover,information.thumbLink+"."+information.thumbExt
                 ,getView(),getContext());
+        // checks if the comic is owned.
         if(owned){
+            // changes the buttons, which makes it possible to edit the comic.
             condition = getLatestCondition();
             addOwned = getView().findViewById(R.id.edit);
             addOwned.setOnClickListener(new addComic());
             add.setOnClickListener(new editComics());
             add.setImageResource(R.drawable.ic_create_white_24dp);
             add.setOnLongClickListener(new showaddOwned());
-        setScores(condition, getView());}
+            setScores(condition, getView());}
+
         else{
             add.setOnLongClickListener(null);
             add.setImageResource(R.drawable.ic_add_black_24dp);
@@ -208,6 +229,7 @@ public class comicInfo extends Fragment {
         }
     }
 
+    // clears all the scores from the view.
     public void clearScores(View view) {
         scoreId = setScoreId();
         for(int id:scoreId){
@@ -215,18 +237,21 @@ public class comicInfo extends Fragment {
         }
     }
 
+    // retrieves the issueNumber from the comic.
     public String stripIssueNumber(comic information) {
         Double issue = information.issueNumber;
         String result = issue.toString().split("\\.")[0];
         return result;
     }
 
+    // makes the summary scrollable.
     public void setScrollableText(int id){
         TextView textView = getView().findViewById(id);
         textView.setMovementMethod(new ScrollingMovementMethod());
 
     }
 
+    // sets the scores into the view.
     public static void setScores(String condition, View view) {
         ArrayList<Double> scores = stripScores(condition);
         scoreId = setScoreId();
@@ -236,7 +261,7 @@ public class comicInfo extends Fragment {
         }
     }
 
-
+    // sorts the scores by extracting them from the string.
     public static ArrayList<Double> stripScores(String condition) {
         ArrayList<Double> result = new ArrayList<Double>();
         String[] values = condition.split(",");
@@ -248,6 +273,7 @@ public class comicInfo extends Fragment {
         return result;
     }
 
+    // prepares scoreId to easily place the scores in the view.
     public static ArrayList<Integer> setScoreId(){
         scoreId.clear();
         scoreId.add(R.id.book1);
@@ -264,6 +290,7 @@ public class comicInfo extends Fragment {
         mainActivity.backAdministration(false,getContext());
     }
 
+    // updates the shared preference of the score.
     public String getLatestCondition() {
         SharedPreferences sharedPref1 = getContext().getSharedPreferences("newScores", Context.MODE_PRIVATE);
         String latestCondition = sharedPref1.getString("newScores","null");
@@ -276,6 +303,7 @@ public class comicInfo extends Fragment {
         return latestCondition;
     }
 
+    // check if the comic is owned or not.
     public boolean getOwned() {
         SharedPreferences sharedPref1 = getContext().getSharedPreferences("newScores", Context.MODE_PRIVATE);
         owned=sharedPref1.getBoolean("status",owned);
@@ -285,55 +313,59 @@ public class comicInfo extends Fragment {
         return owned;
     }
 
-
+    // sets the OnClickListener to add scores.
     private class addComic implements FloatingActionButton.OnClickListener {
         @Override
         public void onClick(View view) {
             if (mainActivity.checkInternet(getContext())) {
 
+                // opens the addComicDialog.
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 addComicDialog fragment3 = new addComicDialog().newInstance(comicId);
                 fragment3.show(ft, "dialog");
+                // prevents wrong handling of the ondismiss.
                 fragment3.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
-                        getInfo(comicId + "");
+                        getInfo(comicId + "",getView());
                     }
                 });
             }
         }
     }
 
+    // sets the OnClickListener to edit scores.
     private class editComics implements FloatingActionButton.OnClickListener {
 
         @Override
         public void onClick(View view) {
             if(mainActivity.checkInternet(getContext())) {
-
+                // opens the editComics dialog.
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
-            editComic fragment4 = new editComic().newInstance(comicId);
-            fragment4.show(ft, "dialog");
-            fragment4.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                editComic fragment4 = new editComic().newInstance(comicId);
+                fragment4.show(ft, "dialog");
+                fragment4.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialog) {
-                    getInfo(comicId+"");
+                getInfo(comicId+"",getView());
                 }
             });
         }
         }
     }
 
+
     @Override
     public void onResume() {
         if(mainActivity.checkInternet(getContext())) {
+            // checks if the comic is now owned.
             owned = getOwned();
-            getInfo(comicId + "");
+            getInfo(comicId + "",getView());
             super.onResume();
         }
     }
 
-
-
+    // sets the OnLongClickListener to start the animation to add more scores.
     private class showaddOwned implements View.OnLongClickListener {
 
         @Override
@@ -343,6 +375,8 @@ public class comicInfo extends Fragment {
             return true;
         }
     }
+
+    // sets the animation.
     public void showAddButton(){
         Animation show_fab_1 = AnimationUtils.loadAnimation(getContext(), R.anim.show_fab_1);
         FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams)
@@ -352,6 +386,7 @@ public class comicInfo extends Fragment {
         addOwned.startAnimation(show_fab_1);
         addOwned.setClickable(true);}
 
+    // sets a timer to start reversed animation.
     public void setTimer(){
         CountDownTimer timer = new CountDownTimer(4000, 100) {
             @Override
@@ -361,7 +396,7 @@ public class comicInfo extends Fragment {
             public void onFinish() {
                 Animation hide_fab_1 = AnimationUtils.loadAnimation(getContext(), R.anim.hide_fab_1);
                 FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams)
-                        addOwned.getLayoutParams();
+                addOwned.getLayoutParams();
                 addOwned.setLayoutParams(layoutParams);
                 addOwned.startAnimation(hide_fab_1);
                 addOwned.setClickable(false);

@@ -2,11 +2,9 @@ package com.example.vincent.comiccollector;
 
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -16,16 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -34,14 +24,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -49,70 +31,85 @@ import java.util.Objects;
  * A simple {@link Fragment} subclass.
  */
 public class collectionView extends Fragment {
+    // prepare some variables that are used in the whole class.
     mainActivity mainActivity;
     ArrayList<ownedComic> collection = new ArrayList<ownedComic>();
     String uid;
     boolean otherUser=false;
+
     public collectionView() {
         // Required empty public constructor
     }
 
-
+    // opens comicInfo.
     public void openInfo(int comicId,String condition) {
+        // checks internet connection.
         if(mainActivity.checkInternet(getContext())) {
-
             FragmentManager fm = getFragmentManager();
             comicInfo fragment = new comicInfo();
+            // checks if it's the own collection or not.
             if (!otherUser) {
                 fragment = new comicInfo().newInstance(true, comicId, condition);
             } else {
                 String ownCondition = getScore(comicId);
                 Boolean ownedByUser = !Objects.equals(ownCondition, "null");
-                Log.d("check owend", ownedByUser.toString());
                 fragment = new comicInfo().newInstance(ownedByUser, comicId, ownCondition);
             }
-
+            // open the fragment.
             FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.targetFrame, fragment);
             ft.addToBackStack(null).commit();
         }
     }
 
+    // retrieve the score from the shared preference.
     public String getScore(int comicId) {
         SharedPreferences sharedPref = getContext().getSharedPreferences("ownCollection", Context.MODE_PRIVATE);
         return sharedPref.getString("comicId_"+comicId,"null");
     }
 
-    public void getCollection(){
+    // retrieves the collection from FireBase.
+    public void getCollection(final View view){
+        // hide the navbar and show the loading screen.
+        tools.hideNavBar(getActivity());
+        tools.setLoadingScreen(R.id.loadingScreen,R.id.content,view);
+
+        // sets the required variables.
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference nDatabase = database.getReference("Users");
         uid=checkOtherUser();
-        Log.d("uid",uid);
-
         nDatabase.child(uid).child("collection").addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        Log.d("updated","true");
+                        // saves the collection to the variable.
                         collection = saveCollection(dataSnapshot);
+
+                        // stores the scores if it's the original user.
                         if(!otherUser) {
                             storeScores();
                         }
+
+                        // sets the grid.
                         gridAdapter adapter = new gridAdapter(getContext(),collection,1);
-                        GridView gridView = getView().findViewById(R.id.collectionGrid);
+                        GridView gridView = view.findViewById(R.id.collectionGrid);
                         gridView.setAdapter(adapter);
                         gridView.setOnItemClickListener(new showInfo());
                         gridView.setOnItemLongClickListener(new checkTitle());
 
+                        // shows the navbar and hides the loading screen.
+                        tools.showNavBar(getActivity());
+                        tools.removeLoadingscreen(R.id.loadingScreen,R.id.content,view);
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
+                        Log.d("cancel error", databaseError.getMessage());
                     }
                 });
     }
 
+    // store the scores in the shared preference.
     public void storeScores() {
         SharedPreferences sharedPref = getContext().getSharedPreferences("ownCollection", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
@@ -122,6 +119,7 @@ public class collectionView extends Fragment {
         editor.apply();
     }
 
+    // check if the fragment is opened to show an other user.
     public String checkOtherUser() {
         SharedPreferences sharedPref = getContext().getSharedPreferences("showUser", Context.MODE_PRIVATE);
         if(!Objects.equals(sharedPref.getString("uid", "null"), "null")) {
@@ -141,6 +139,7 @@ public class collectionView extends Fragment {
 
     }
 
+    // saves the collection to an arraylist.
     public static ArrayList<ownedComic> saveCollection(DataSnapshot dataSnapshot) {
         ArrayList<ownedComic> collectionList = new ArrayList<ownedComic>();
         for (DataSnapshot noteDataSnapshot : dataSnapshot.getChildren()) {
@@ -150,6 +149,7 @@ public class collectionView extends Fragment {
         return collectionList;
     }
 
+    // sets the OnItemClickListener for each item, which opens the comicInfo.
     public class  showInfo implements AdapterView.OnItemClickListener{
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -179,15 +179,10 @@ public class collectionView extends Fragment {
         // Inflate the layout for this fragment
         View view =inflater.inflate(R.layout.fragment_collection_view, container,
                 false);
-        return view;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getCollection();
+        // gets the collection.
+        getCollection(view);
         mainActivity.backAdministration(true,getContext());
-
+        return view;
     }
 
     @Override
@@ -197,7 +192,7 @@ public class collectionView extends Fragment {
                 mainActivity.backAdministration(false, getContext());
             } else {
 
-                getCollection();
+                getCollection(getView());
                 mainActivity.backAdministration(true, getContext());
             }
             super.onResume();

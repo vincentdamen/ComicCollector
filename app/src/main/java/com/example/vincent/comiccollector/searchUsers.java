@@ -39,11 +39,12 @@ import java.util.Objects;
  * A simple {@link Fragment} subclass.
  */
 public class searchUsers extends Fragment {
+    // sets required variables.
     ArrayList<String> userName = new ArrayList<String>();
     ArrayList<String> uid = new ArrayList<String>();
-    ListView list;
     EditText searchBar;
     listAdapterSearch adapter;
+
     public searchUsers() {
         // Required empty public constructor
     }
@@ -55,16 +56,20 @@ public class searchUsers extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_search_users, container, false);
         searchBar = view.findViewById(R.id.searchBar);
+
+        // retrieve recent users.
         getRecentUsers(view);
+
+        // checks if uid is not empty.
         if(uid.isEmpty()){
-        getUsers(true);
-        Log.d("size",userName.size()+"");
+            // retrieve users from firebase.
+            getUsers(true);
         }
         searchBar.addTextChangedListener(new controlSearch());
-
         return view;
     }
 
+    // opens the collection of the selected user.
     private class selectUser implements android.widget.AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -78,6 +83,7 @@ public class searchUsers extends Fragment {
         }
     }
 
+    // opens collection view.
     public void openCollectionView() {
         mainActivity.backAdministration(false,getContext());
         FragmentManager fm = getFragmentManager();
@@ -87,15 +93,20 @@ public class searchUsers extends Fragment {
         ft.addToBackStack(null).commit();
     }
 
+    // makes the listAdapter.
     public void setList(View view){
         ListView list = view.findViewById(R.id.resultList);
         adapter = new listAdapterSearch(getContext(),userName,1);
         list.setAdapter(adapter);
         list.setOnItemClickListener(new selectUser());
     }
+
+    // retrieves recently visited user from shared preferences.
     public void getRecentUsers(View view){
         SharedPreferences sharedPref = getContext().getSharedPreferences("recentVisited", Context.MODE_PRIVATE);
         int size = sharedPref.getInt("size", 0);
+
+        // clears the variables.
         userName.clear();
         uid.clear();
         for (int i = size+1; i >0 ; i--) {
@@ -110,6 +121,8 @@ public class searchUsers extends Fragment {
 
         setList(view);
     }
+
+    // add user to shared preferences.
     public void addRecentVisited(int position) {
         SharedPreferences sharedPref1 = getContext().getSharedPreferences("recentVisited", Context.MODE_PRIVATE);
         Boolean removeOld=false;
@@ -117,6 +130,8 @@ public class searchUsers extends Fragment {
         Log.d("size", userName.size()+"");
         int count = sharedPref1.getInt("size",0);
         for(int i=0;i<count+1;i++){
+
+            // checks if user is in shared preferences.
             if(Objects.equals(sharedPref1.getString("uid_" + i, "null"), uid.get(position))){
                 toRemove=i;
                 removeOld=true;
@@ -135,6 +150,7 @@ public class searchUsers extends Fragment {
 
     }
 
+    // handles the textinput from the search bar.
     private class controlSearch implements TextWatcher {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -146,7 +162,6 @@ public class searchUsers extends Fragment {
         @Override
         public void afterTextChanged(Editable editable) {
             if (editable.length()==0){
-                Log.d("test","true");
                 getRecentUsers(getView());
             }else {
             getUsers(false);
@@ -155,6 +170,7 @@ public class searchUsers extends Fragment {
         }
     }
 
+    // matches query to names from users.
     public void search(final String editable){
         CountDownTimer timer = new CountDownTimer(500, 100) {
             @Override
@@ -168,6 +184,7 @@ public class searchUsers extends Fragment {
         timer.start();
     }
 
+    // changes dataset after search.
     public void updateResults(String s) {
         ArrayList<String> tempName = new ArrayList<String>();
         ArrayList<String> tempUid = new ArrayList<String>();
@@ -183,6 +200,7 @@ public class searchUsers extends Fragment {
         uid.addAll(tempUid);
         }
 
+    // retrieve users from fireBase.
     public void getUsers(final boolean onCreate){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference nDatabase = database.getReference("Users");

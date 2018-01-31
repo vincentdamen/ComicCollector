@@ -13,41 +13,19 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.GridView;
-import android.widget.TextView;
+
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Objects;
 
 public class mainActivity extends AppCompatActivity {
-
+    // handles the bottom navigation.
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
@@ -73,7 +51,7 @@ public class mainActivity extends AppCompatActivity {
             return false;
         }};
 
-
+    // checks if the user is logged in.
     public boolean checkLogin(){
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
@@ -85,7 +63,7 @@ public class mainActivity extends AppCompatActivity {
         }
     return true;}
 
-
+    // opens the collection view.
     public void openCollection(){
         FragmentManager fm = getSupportFragmentManager();
         collectionView fragment = new collectionView();
@@ -94,6 +72,7 @@ public class mainActivity extends AppCompatActivity {
         ft.commit();
     }
 
+    // opens the browse comics.
     public void openBrowse(){
         FragmentManager fm = getSupportFragmentManager();
         browseComic fragment1 = new browseComic();
@@ -101,6 +80,8 @@ public class mainActivity extends AppCompatActivity {
         ft.replace(R.id.targetFrame, fragment1);
         ft.commit();
     }
+
+    // opens search user.
     public void openSearch(){
         FragmentManager fm = getSupportFragmentManager();
         searchUsers fragment1 = new searchUsers();
@@ -108,9 +89,12 @@ public class mainActivity extends AppCompatActivity {
         ft.replace(R.id.targetFrame, fragment1);
         ft.commit();
     }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // checks login.
         if (checkLogin()) {
             setContentView(R.layout.activity_main);
             checkInternet(getApplicationContext());
@@ -119,6 +103,7 @@ public class mainActivity extends AppCompatActivity {
             navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         }
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -126,38 +111,49 @@ public class mainActivity extends AppCompatActivity {
         backAdministration(true,getApplicationContext());
     }
 
+    // manages the backnavigation.
     public static void backAdministration(boolean home,Context context) {
         SharedPreferences sharedPref = context.getSharedPreferences("home",Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putBoolean("home", home);
         editor.apply();
     }
+
+    // flips the action of the backnavigation.
     public void reverseBackAdministration(){
         SharedPreferences sharedPref1 = this.getSharedPreferences("home",Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref1.edit();
         editor.putBoolean("home", !checkBackAdministration());
         editor.apply();
     }
+
+    // saves the offset in shared preferences.
     public static void saveOffset(String offset,Context context){
         SharedPreferences sharedPref1 = context.getSharedPreferences("home",Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref1.edit();
         editor.putString("offset", offset);
         editor.apply();
     }
+
+    // retrieves the offset from shared preferences.
     public static String getOffset(Context context){
         SharedPreferences sharedPref =  context.getSharedPreferences("home",Context.MODE_PRIVATE);
         return sharedPref.getString("offset","null");
     }
+
+    // removes the offset from shared preferences.
     public static  void removeOffset(Context context){
         SharedPreferences sharedPref = context.getSharedPreferences("home",Context.MODE_PRIVATE);
         sharedPref.edit().remove("offset").apply();
     }
+
+    // checks the current state of the backnavigation.
     public boolean checkBackAdministration(){
         SharedPreferences sharedPref = getApplication().getSharedPreferences("home",Context.MODE_PRIVATE);
         boolean state = sharedPref.getBoolean("home",true);
         return state;
     }
-
+    // logout dialog.
     public void signOut() {
         AlertDialog alertDialog = new AlertDialog.Builder(new ContextThemeWrapper(mainActivity.this,R.style.AlertDialogCustom)).create();
         alertDialog.setMessage("Do you really want to leave your collection  behind?");
@@ -177,6 +173,8 @@ public class mainActivity extends AppCompatActivity {
                 });
         alertDialog.show();
     }
+
+    // checks if there's an internet connection.
     public static Boolean checkInternet(Context context) {
 
         ConnectivityManager cm =
@@ -193,11 +191,12 @@ public class mainActivity extends AppCompatActivity {
         return true;
     }
 
+
     @Override
     public void onBackPressed() {
-        // Hier worden de benodigde variabelen benoemd
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setVisibility(View.VISIBLE);
+        // if not true, then don't kill the app.
         if (!checkBackAdministration()) {
             super.onBackPressed();
             reverseBackAdministration();

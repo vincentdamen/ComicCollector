@@ -7,23 +7,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.GridView;
-import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -42,10 +31,13 @@ import java.util.Objects;
  * A simple {@link Fragment} subclass.
  */
 public class editComic extends DialogFragment {
+    // prepare some variables that are used in the whole class.
     ArrayList<ownedComic> collection = new ArrayList<ownedComic>();
     int comicId;
     String condition;
+    private DialogInterface.OnDismissListener onDismissListener;
 
+    // the method creates the possibility to open the fragment with an included variable.
     public editComic newInstance(int comicId) {
         editComic f = new editComic();
         // Supply num input as an argument.
@@ -67,29 +59,38 @@ public class editComic extends DialogFragment {
         View view = inflater.inflate(R.layout.fragment_edit_comic, container, false);
         comicId = getArguments().getInt("comicId");
         getScores(comicId + "");
+
         Button send = view.findViewById(R.id.sendButton);
         Button cancel = view.findViewById(R.id.cancelButton);
         send.setOnClickListener(new sendToFirebase());
         cancel.setOnClickListener(new cancelChanges());
+
         listAdapter.notifyUser(getString(R.string.saveWarning),getContext());
         return view;
     }
 
+    // retrieves the scores from firebase.
     public void getScores(final String query) {
+        // prepares the required variables.
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference nDatabase = database.getReference("Users");
         final FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser userId = mAuth.getCurrentUser();
+
         nDatabase.child(userId.getUid()).child("collection").addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
+                        // for each comic, add it to collection.
                         for (DataSnapshot comic : dataSnapshot.getChildren()) {
                             collection.add(comic.getValue(ownedComic.class));
+                            // if the comicId matches. retrieve all the necessary info
                             if (Objects.equals(comic.getValue(ownedComic.class).comicId + "", query)) {
                                 ownedComic comicBook = comic.getValue(ownedComic.class);
                                 ArrayList<Double> scores = comicInfo.stripScores(comicBook.condition);
                                 configSharedPrefScores(scores);
+
+                                // set the listAdapter.
                                 listAdapter adapter = new listAdapter(getContext(), scores, 1);
                                 String title = "Editing: " + comicBook.title;
                                 tools.setTextView(R.id.titleEdit, title, getView());
@@ -98,14 +99,13 @@ public class editComic extends DialogFragment {
                             }
                         }
                     }
-
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
                     }
                 });
     }
 
+    // store the shared preference to temporarily save the scores.
     public void configSharedPrefScores(ArrayList<Double> scores) {
         SharedPreferences sharedPref1 = getContext().getSharedPreferences("scores", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref1.edit();
@@ -117,6 +117,7 @@ public class editComic extends DialogFragment {
         editor.apply();
     }
 
+    // retrieve the scores from the shared preference.
     public ArrayList<Double> getSharedPrefScores() {
         SharedPreferences sharedPref = getContext().getSharedPreferences("scores", Context.MODE_PRIVATE);
         int size = sharedPref.getInt("size", 0);
@@ -131,10 +132,10 @@ public class editComic extends DialogFragment {
     }
 
 
-    private DialogInterface.OnDismissListener onDismissListener;
     public void setOnDismissListener(DialogInterface.OnDismissListener onDismissListener) {
         this.onDismissListener = onDismissListener;
     }
+
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
@@ -143,6 +144,7 @@ public class editComic extends DialogFragment {
         }
     }
 
+    // the OnClickListener of the cancel button.
     private class cancelChanges implements View.OnClickListener {
         @Override
         public void onClick(View view) {
@@ -151,12 +153,14 @@ public class editComic extends DialogFragment {
         }
     }
 
+    // remove the score from the shared preference.
     public void removeScores() {
         SharedPreferences sharedPref1 = getContext().getSharedPreferences("scores", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref1.edit();
         editor.clear().apply();
     }
 
+    // the OnClickListener to send the updated scores.
     private class sendToFirebase implements View.OnClickListener {
         @Override
         public void onClick(View view) {
@@ -168,7 +172,7 @@ public class editComic extends DialogFragment {
         }
     }
 
-
+    // get the latest scores and update the collection.
     public void applyChanges() {
         ArrayList<ownedComic> toRemove= new ArrayList<ownedComic>();
         ArrayList<Double> scores = getSharedPrefScores();
@@ -186,6 +190,7 @@ public class editComic extends DialogFragment {
         collection.removeAll(toRemove);
     }
 
+    //transform the Arraylist of scores to a string.
     public String Stringify(ArrayList<Double> scores) {
         String result = "";
 
