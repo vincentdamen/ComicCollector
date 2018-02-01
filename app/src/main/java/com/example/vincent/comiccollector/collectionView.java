@@ -85,11 +85,8 @@ public class collectionView extends Fragment {
                         // saves the collection to the variable.
                         collection = saveCollection(dataSnapshot);
 
-                        // stores the scores if it's the original user.
-                        if(!otherUser) {
-                            storeScores();
-                        }
-
+                        // stores the scores.
+                        storeScores();
                         // sets the grid.
                         gridAdapter adapter = new gridAdapter(getContext(),collection,1);
                         GridView gridView = view.findViewById(R.id.collectionGrid);
@@ -124,9 +121,6 @@ public class collectionView extends Fragment {
         SharedPreferences sharedPref = getContext().getSharedPreferences("showUser", Context.MODE_PRIVATE);
         if(!Objects.equals(sharedPref.getString("uid", "null"), "null")) {
             uid=sharedPref.getString("uid","null");
-            SharedPreferences.Editor editor = sharedPref.edit();
-            editor.remove("uid");
-            editor.apply();
             otherUser=true;
             mainActivity.backAdministration(false,getContext());
         }
@@ -138,6 +132,7 @@ public class collectionView extends Fragment {
         return uid;
 
     }
+
 
     // saves the collection to an arraylist.
     public static ArrayList<ownedComic> saveCollection(DataSnapshot dataSnapshot) {
@@ -153,6 +148,7 @@ public class collectionView extends Fragment {
     public class  showInfo implements AdapterView.OnItemClickListener{
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            setOtherUser(otherUser);
             int comicId = collection.get(i).comicId;
             String condition = collection.get(i).condition;
             mainActivity.backAdministration(false,getContext());
@@ -173,6 +169,13 @@ public class collectionView extends Fragment {
         }
     }
 
+    // set other user shared preference, to remove buttons.
+    public void setOtherUser(boolean state){
+        SharedPreferences sharedPref = getActivity().getSharedPreferences("otherUser", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean("otherUser",state);
+        editor.apply();
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

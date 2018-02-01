@@ -214,11 +214,15 @@ public class comicInfo extends Fragment {
         if(owned){
             // changes the buttons, which makes it possible to edit the comic.
             condition = getLatestCondition();
+            if(!getOtherUser()){
             addOwned = getView().findViewById(R.id.edit);
             addOwned.setOnClickListener(new addComic());
             add.setOnClickListener(new editComics());
             add.setImageResource(R.drawable.ic_create_white_24dp);
-            add.setOnLongClickListener(new showaddOwned());
+            add.setOnLongClickListener(new showaddOwned());}
+            else{
+                add.setVisibility(View.GONE);
+            }
             setScores(condition, getView());}
 
         else{
@@ -229,6 +233,10 @@ public class comicInfo extends Fragment {
         }
     }
 
+    public boolean getOtherUser(){
+        SharedPreferences sharedPref = getActivity().getSharedPreferences("otherUser", Context.MODE_PRIVATE);
+        return sharedPref.getBoolean("otherUser",false);
+    }
     // clears all the scores from the view.
     public void clearScores(View view) {
         scoreId = setScoreId();

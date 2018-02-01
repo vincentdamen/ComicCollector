@@ -65,6 +65,10 @@ public class mainActivity extends AppCompatActivity {
 
     // opens the collection view.
     public void openCollection(){
+        SharedPreferences sharedPref = this.getSharedPreferences("showUser", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.remove("uid");
+        editor.apply();
         FragmentManager fm = getSupportFragmentManager();
         collectionView fragment = new collectionView();
         FragmentTransaction ft = fm.beginTransaction();
