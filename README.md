@@ -20,7 +20,8 @@ Ik denk persoonlijk dat het importeren van de Marvel API het lastigste proces za
 Ik wil een zo compleet mogelijke app bouwen. De hoofdfunctionaliteit is het bekijken, zoeken en bijwerken van je eigen collectie. Dit moet overzichtelijk en snel werken. Daarnaast wil ik ook een catalogus van alle comics bouwen. Tot slot wil ook andere gebruikers opzoeken en bekijken. 
 ### Extra 
 De zoek functionaliteit kan een zeer krachtige tool worden als ik een filter kan bouwen. Dit kan alleen heel veel tijd gaan kosten. Dit zal dan ook een extraatje zijn.
-
+### video
+https://youtu.be/vOfvOLtE0wg
 ![First design](doc/Design.png)
 
 
