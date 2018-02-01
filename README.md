@@ -1,4 +1,5 @@
 # ComicCollector
+[![BCH compliance](https://bettercodehub.com/edge/badge/vincentdamen/ComicCollector?branch=master)](https://bettercodehub.com/)
 ## Concept
 Je kent het wel, je staat in stripboekenzaak en ziet een hele coole comic, maar hij komt je vaag bekend voor. Had je deze issue niet al? Hier kan de ComicCollector je helpen. CC is een gids die je al je verzameling opslaat en is een gids voor alle Marvel comics. 
 ### Doelgroep
