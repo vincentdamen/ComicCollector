@@ -27,6 +27,30 @@ https://youtu.be/vOfvOLtE0wg
 ![overview results](doc/overviewScreens.png)
 
 
+## Bronnen
+- [Firebase](https://firebase.google.com/) (Licensed onder Creative Commons Attribution 3.0 License)
+- [Picasso](http://square.github.io/picasso/) (Licensed onder BSD, part MIT and Apache 2.0)
+- [Marvel API](https://developer.marvel.com)  (Licensed onder Marvel licenses)
+
+## Copyright
+  Copyright 2018 Vincent Damen  
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
+
+Data provided by Marvel. © 2014 Marvel
+
+
 
 
 
