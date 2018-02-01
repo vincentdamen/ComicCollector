@@ -50,7 +50,7 @@ https://youtu.be/vOfvOLtE0wg
 
 Data provided by Marvel. © 2014 Marvel
 
-
+ © Vincent Damen, 2018
 
 
 
