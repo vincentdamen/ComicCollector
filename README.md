@@ -22,7 +22,7 @@ Ik wil een zo compleet mogelijke app bouwen. De hoofdfunctionaliteit is het beki
 ### Extra 
 De zoek functionaliteit kan een zeer krachtige tool worden als ik een filter kan bouwen. Dit kan alleen heel veel tijd gaan kosten. Dit zal dan ook een extraatje zijn.
 ### video
-https://youtu.be/vOfvOLtE0wg
+https://youtu.be/NuOZi-e9KpM
 
 ![overview results](doc/overviewScreens.png)
 
